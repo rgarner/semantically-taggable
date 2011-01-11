@@ -1,0 +1,10 @@
+sqlite3:
+  adapter: sqlite3
+  database: semantically_taggable.sqlite3
+
+mysql:
+  adapter: mysql
+  hostname: localhost
+  username: root
+  password:
+  database: semantically_taggable

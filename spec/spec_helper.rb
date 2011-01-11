@@ -1,12 +1,34 @@
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
-$LOAD_PATH.unshift(File.dirname(__FILE__))
-require 'rspec'
-require 'semantically-taggable'
+$LOAD_PATH << "." unless $LOAD_PATH.include?(".")
 
-# Requires supporting files with custom matchers and macros, etc,
-# in ./support/ and its subdirectories.
-Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
+begin
+  require "rubygems"
+  require "bundler"
 
-RSpec.configure do |config|
-  
+  if Gem::Version.new(Bundler::VERSION) <= Gem::Version.new("0.9.5")
+    raise RuntimeError, "Your bundler version is too old." +
+        "Run `gem install bundler` to upgrade."
+  end
+
+  # Set up load paths for all bundled gems
+  Bundler.setup
+rescue Bundler::GemNotFound
+  raise RuntimeError, "Bundler couldn't find some gems." +
+      "Did you run `bundle install`?"
 end
+
+Bundler.require
+require File.expand_path('../../lib/semantically-taggable', __FILE__)
+
+unless [].respond_to?(:freq)
+  class Array
+    def freq
+      k = Hash.new(0)
+      each { |e| k[e]+=1 }
+      k
+    end
+  end
+end
+
+require 'database_seeder'
+
+reseed_database!
