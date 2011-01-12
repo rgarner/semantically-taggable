@@ -2,7 +2,7 @@ require File.expand_path('../../spec_helper', __FILE__)
 
 describe "Semantically Taggable" do
   before(:each) do
-    reseed_database!
+    reset_database!
   end
 
   it "should provide a class method 'taggable?' that is false for untaggable models" do
@@ -11,7 +11,7 @@ describe "Semantically Taggable" do
 
   describe "Taggable Method Generation" do
     before(:each) do
-      reseed_database!
+      reset_database!
       Article.write_inheritable_attribute :scheme_names, []
 
       Article.semantically_taggable :keywords, :dg_topics, :ipsv_subjects
@@ -67,18 +67,18 @@ describe "Semantically Taggable" do
 
   describe 'Tagging Contexts' do
     it 'should eliminate duplicate tagging scheme names ' do
-      Article.semantically_taggable(:skills, :skills)
-      Article.scheme_names.freq[:skills].should_not == 3
+      Article.semantically_taggable(:keywords, :keywords)
+      Article.scheme_names.freq[:keywords].should_not == 3
     end
 
     it "should not contain embedded/nested arrays" do
-      Article.semantically_taggable([:array], [:array])
-      Article.scheme_names.freq[[:array]].should == 0
+      Article.semantically_taggable([:keywords], [:keywords])
+      Article.scheme_names.freq[[:keywords]].should == 0
     end
 
     it "should _flatten_ the content of arrays" do
-      Article.semantically_taggable([:array], [:array])
-      Article.scheme_names.freq[:array].should == 1
+      Article.semantically_taggable([:keywords], [:keywords])
+      Article.scheme_names.freq[:keywords].should == 1
     end
 
     # TODO: should raise error?

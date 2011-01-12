@@ -2,7 +2,7 @@ require "spec_helper"
 
 describe "Finding or creating with LIKE by name" do
   before :each do
-    reseed_database!
+    reset_database!
   end
 
   it "should require the last item to be the symbol of the scheme" do

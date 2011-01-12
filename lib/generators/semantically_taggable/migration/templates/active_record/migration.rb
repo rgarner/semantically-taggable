@@ -28,7 +28,7 @@ class SemanticallyTaggableMigration < ActiveRecord::Migration
     end
 
     add_index :taggings, :tag_id
-    add_index :taggings, [:taggable_id, :taggable_type, :scheme_id]
+    add_index :taggings, [:taggable_id, :taggable_type]
   end
 
   def self.down

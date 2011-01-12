@@ -31,4 +31,4 @@ end
 
 require 'database_seeder'
 
-reseed_database!
+reset_database!

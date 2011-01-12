@@ -9,8 +9,8 @@ class CachedModel < ActiveRecord::Base
 end
 
 class OtherTaggableModel < ActiveRecord::Base
-  semantically_taggable :tags, :languages
-  semantically_taggable :needs, :offerings
+#  semantically_taggable :tags, :languages
+#  semantically_taggable :needs, :offerings
 end
 
 class InheritingArticle < Article

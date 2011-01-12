@@ -2,7 +2,7 @@ require File.expand_path('../../spec_helper', __FILE__)
 
 describe "Tagging articles" do
   before(:each) do
-    reseed_database!
+    reset_database!
     @article = Article.new(:name => "Bob Jones")
   end
 
@@ -55,6 +55,17 @@ describe "Tagging articles" do
     @article.reload
     @article.keyword_list.should include("ruby")
     @article.keyword_list.should_not include("rails")
+  end
+
+  it "should differentiate between schemes on tag collections too" do
+    @article.keyword_list = 'foo'
+    @article.ipsv_subject_list = 'bar'
+    @article.save
+
+    foo = SemanticallyTaggable::Tag.find_by_name('foo')
+
+    @article.reload
+    @article.ipsv_subjects.should_not include(foo)
   end
 
   it "should be able to remove tags through list alone" do
