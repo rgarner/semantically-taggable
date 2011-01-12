@@ -237,7 +237,7 @@ describe "Tagging articles" do
       Article.tagged_with("bob", :on => :keywords).first.should == @inherited_same
     end
   
-    it "should be able to add on contexts only to some subclasses" do
+    it "should be able to add in schemes only to some subclasses" do
       @inherited_different.life_event_list = "birth, marriage"
       @inherited_different.save
       InheritingArticle.tagged_with("birth", :on => :life_events).should be_empty

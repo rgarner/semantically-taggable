@@ -7,7 +7,7 @@ module SemanticallyTaggable
     ##
     # Make a model taggable in a specified scheme.
     #
-    # @param [Array] tag_types An array of taggable contexts
+    # @param [Array] scheme_names An array of taggable scheme names (must exist in Scheme model)
     #
     # Example:
     #   class User < ActiveRecord::Base
@@ -34,8 +34,6 @@ module SemanticallyTaggable
           include SemanticallyTaggable::Taggable::Collection
 # TODO: reintroduce caching support
 #          include SemanticallyTaggable::Taggable::Cache
-          include SemanticallyTaggable::Taggable::Ownership
-#          include SemanticallyTaggable::Taggable::Related
         end
       end
     end

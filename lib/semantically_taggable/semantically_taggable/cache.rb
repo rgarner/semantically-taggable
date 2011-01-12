@@ -3,7 +3,8 @@ module SemanticallyTaggable::Taggable
   module Cache
     def self.included(base)
       # Skip adding caching capabilities if table not exists or no cache columns exist
-      return unless base.table_exists? && base.scheme_names.any? { |context| base.column_names.include?("cached_#{context.to_s.singularize}_list") }
+      return unless base.table_exists? && base.scheme_names.any? {
+          |scheme_name| base.column_names.include?("cached_#{scheme_name.to_s.singularize}_list") }
 
       base.send :include, SemanticallyTaggable::Taggable::Cache::InstanceMethods
       base.extend SemanticallyTaggable::Taggable::Cache::ClassMethods
@@ -31,8 +32,8 @@ module SemanticallyTaggable::Taggable
         initialize_semantically_taggable_cache
       end
       
-      def caching_tag_list_on?(context)
-        column_names.include?("cached_#{context.to_s.singularize}_list")
+      def caching_tag_list_on?(scheme_name)
+        column_names.include?("cached_#{scheme_name.to_s.singularize}_list")
       end
     end
     

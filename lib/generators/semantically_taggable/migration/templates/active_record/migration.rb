@@ -1,7 +1,7 @@
 class SemanticallyTaggableMigration < ActiveRecord::Migration
   def self.up
     create_table :schemes do |t|
-      t.string :context
+      t.string :name
       t.string :meta_name
       t.string :meta_scheme
       t.string :description
@@ -9,7 +9,7 @@ class SemanticallyTaggableMigration < ActiveRecord::Migration
       t.boolean :polyhierarchical, :default => false
     end
 
-    add_index :schemes, :context, :unique => true
+    add_index :schemes, :name, :unique => true
 
     create_table :tags do |t|
       t.string :name
@@ -28,7 +28,7 @@ class SemanticallyTaggableMigration < ActiveRecord::Migration
     end
 
     add_index :taggings, :tag_id
-    add_index :taggings, [:taggable_id, :taggable_type, :context]
+    add_index :taggings, [:taggable_id, :taggable_type, :scheme_id]
   end
 
   def self.down

@@ -8,8 +8,7 @@ module SemanticallyTaggable
     has_many :tags
 
     def self.by_name(name)
-      Scheme.find_by_name!(name.to_s) # || \
-        #raise(ActiveRecord::RecordNotFound, "SemanticallyTaggable::Scheme with name '#{name}' not found")
+      Scheme.find_by_name!(name.to_s)
     end
   end
 end

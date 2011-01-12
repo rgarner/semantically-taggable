@@ -16,12 +16,12 @@ module SemanticallyTaggable::Taggable
       def initialize_semantically_taggable_core
         scheme_names.map(&:to_s).each do |scheme_name|
           singular_scheme_name  = scheme_name.to_s.singularize
-          context_taggings      = "#{singular_scheme_name}_taggings".to_sym
-          context_tags          = scheme_name.to_sym
+          scheme_taggings      = "#{singular_scheme_name}_taggings".to_sym
+          scheme_tags          = scheme_name.to_sym
 
           class_eval do
-            has_many context_taggings, :as => :taggable, :dependent => :destroy, :include => :tag, :class_name => "SemanticallyTaggable::Tagging"
-            has_many context_tags, :through => context_taggings, :source => :tag, :class_name => "SemanticallyTaggable::Tag"
+            has_many scheme_taggings, :as => :taggable, :dependent => :destroy, :include => :tag, :class_name => "SemanticallyTaggable::Tagging"
+            has_many scheme_tags, :through => scheme_taggings, :source => :tag, :class_name => "SemanticallyTaggable::Tag"
           end
 
           class_eval %(

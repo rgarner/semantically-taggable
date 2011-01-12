@@ -6,8 +6,6 @@ require "semantically_taggable/semantically_taggable"
 require "semantically_taggable/semantically_taggable/core"
 require "semantically_taggable/semantically_taggable/collection"
 require "semantically_taggable/semantically_taggable/cache"
-require "semantically_taggable/semantically_taggable/ownership"
-# require "semantically_taggable/semantically_taggable/related"
 
 require "semantically_taggable/tag"
 require "semantically_taggable/scheme"
@@ -18,7 +16,6 @@ $LOAD_PATH.shift
 
 if defined?(ActiveRecord::Base)
   ActiveRecord::Base.extend SemanticallyTaggable::Taggable
-  # ActiveRecord::Base.send :include, SemanticallyTaggable::Tagger
 end
 
 if defined?(ActionView::Base)
