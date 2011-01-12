@@ -76,6 +76,7 @@ module SemanticallyTaggable::Taggable
         conditions = []
 
 
+        # TODO: add tests for/support :exclude and :any with semantic tags
         if options.delete(:exclude)
           tags_conditions = tag_list.map { |t| sanitize_sql(["tags.name LIKE ?", t]) }.join(" OR ")
           conditions << "#{table_name}.#{primary_key} NOT IN (SELECT #{SemanticallyTaggable::Tagging.table_name}.taggable_id FROM taggings JOIN tags ON taggings.tag_id = tags.id AND (#{tags_conditions}) WHERE taggings.taggable_type = #{quote_value(base_class.name)})"

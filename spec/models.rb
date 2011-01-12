@@ -5,7 +5,7 @@ class Article < ActiveRecord::Base
 end
 
 class CachedModel < ActiveRecord::Base
-  semantically_taggable
+  semantically_taggable :keywords
 end
 
 class OtherTaggableModel < ActiveRecord::Base

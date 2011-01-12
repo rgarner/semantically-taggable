@@ -32,6 +32,7 @@ module SemanticallyTaggable
 
           include SemanticallyTaggable::Taggable::Core
           include SemanticallyTaggable::Taggable::Collection
+# TODO: reintroduce caching support
 #          include SemanticallyTaggable::Taggable::Cache
           include SemanticallyTaggable::Taggable::Ownership
 #          include SemanticallyTaggable::Taggable::Related

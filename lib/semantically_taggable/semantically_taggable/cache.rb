@@ -1,4 +1,5 @@
 module SemanticallyTaggable::Taggable
+  # TODO: reintroduce caching support?
   module Cache
     def self.included(base)
       # Skip adding caching capabilities if table not exists or no cache columns exist

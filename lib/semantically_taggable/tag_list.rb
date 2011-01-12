@@ -1,11 +1,9 @@
 module SemanticallyTaggable
   class TagList < Array
-    cattr_accessor :delimiter
-    self.delimiter = ','
-
-    attr_accessor :owner
+    attr_accessor :delimiter
 
     def initialize(*args)
+      self.delimiter = ','
       add(*args)
     end
   
@@ -15,11 +13,13 @@ module SemanticallyTaggable
     # Example:
     #   tag_list = TagList.from("One , Two,  Three")
     #   tag_list # ["One", "Two", "Three"]
-    def self.from(string)
+    def self.from(string, delimiter = ',')
       glue   = delimiter.ends_with?(" ") ? delimiter : "#{delimiter} "
       string = string.join(glue) if string.respond_to?(:join)
 
       new.tap do |tag_list|
+        tag_list.delimiter = delimiter
+
         string = string.to_s.dup
 
         # Parse the quoted tags
