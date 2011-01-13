@@ -10,5 +10,11 @@ module SemanticallyTaggable
     def self.by_name(name)
       Scheme.find_by_name!(name.to_s)
     end
+
+    def create_tag(attributes)
+      Tag.create(attributes) do |tag|
+        tag.scheme = self
+      end
+    end
   end
 end

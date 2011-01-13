@@ -74,6 +74,7 @@ module SemanticallyTaggable::Taggable
         scheme_name = options.delete(:on)
         raise ArgumentError, 'tagged_with requires :on' unless scheme_name
 
+        scheme = SemanticallyTaggable::Scheme.by_name(scheme_name)
         tag_list = SemanticallyTaggable::TagList.from(tags)
 
         return {} if tag_list.empty?
@@ -92,7 +93,7 @@ module SemanticallyTaggable::Taggable
           conditions << "#{table_name}.#{primary_key} IN (SELECT taggings.taggable_id FROM taggings JOIN tags ON taggings.tag_id = tags.id AND (#{tags_conditions}) WHERE taggings.taggable_type = #{quote_value(base_class.name)})"
 
         else
-          tags = SemanticallyTaggable::Tag.named_any(tag_list, scheme_name)
+          tags = scheme.tags.named_any(tag_list)
           return scoped(:conditions => "1 = 0") unless tags.length == tag_list.length
 
           tags.each do |tag|

@@ -29,25 +29,8 @@ def reset_database!
   models.each do |model|
     ActiveRecord::Base.connection.execute "DELETE FROM #{model.table_name}"
   end
-end
 
-ENV['DB'] ||= 'mysql'
-
-database_yml = File.expand_path('../database.yml', __FILE__)
-if File.exists?(database_yml)
-  active_record_configuration = YAML.load_file(database_yml)[ENV['DB']]
-
-  ActiveRecord::Base.establish_connection(active_record_configuration)
-  ActiveRecord::Base.logger = Logger.new(File.join(File.dirname(__FILE__), "debug.log"))
-
-  ActiveRecord::Base.silence do
-    ActiveRecord::Migration.verbose = false
-
-    load(File.dirname(__FILE__) + '/schema.rb')
-    load_schemes!
-    load(File.dirname(__FILE__) + '/models.rb')
+  %w{narrower_tags broader_tags related_tags tag_relations}.each do |table_name|
+    ActiveRecord::Base.connection.execute "DELETE FROM #{table_name}"
   end
-
-else
-  raise "Please create #{database_yml} first to configure your database. Take a look at: #{database_yml}.sample"
 end

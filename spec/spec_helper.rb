@@ -17,7 +17,23 @@ rescue Bundler::GemNotFound
 end
 
 Bundler.require
+
+require 'active_record'
+
+ENV['DB'] ||= 'mysql'
+
+database_yml = File.expand_path('../database.yml', __FILE__)
+if File.exists?(database_yml)
+  active_record_configuration = YAML.load_file(database_yml)[ENV['DB']]
+
+  ActiveRecord::Base.establish_connection(active_record_configuration)
+  ActiveRecord::Base.logger = Logger.new(File.join(File.dirname(__FILE__), "debug.log"))
+else
+  raise "Please create #{database_yml} first to configure your database. Take a look at: #{database_yml}.sample"
+end
+
 require File.expand_path('../../lib/semantically-taggable', __FILE__)
+require 'database_seeder'
 
 unless [].respond_to?(:freq)
   class Array
@@ -29,6 +45,37 @@ unless [].respond_to?(:freq)
   end
 end
 
-require 'database_seeder'
+# Set @@variable_name in a before(:all) block and give access to it
+# via let(:variable_name)
+#
+# Example:
+# describe Transaction do
+# set(:transaction) { Factory(:transaction) }
+#
+# it "should be in progress" do
+# transaction.state.should == 'in_progress'
+# end
+# end
+def set(variable_name, &block)
+  before(:all) do
+    self.class.send(:class_variable_set, "@@#{variable_name}".to_sym, instance_eval(&block))
+  end
+
+  let(variable_name) do
+    self.class.send(:class_variable_get, "@@#{variable_name}".to_sym).tap do |i|
+      if i.respond_to?(:new_record?)
+        i.reload unless i.new_record?
+      end
+    end
+  end
+end
+
+ActiveRecord::Base.silence do
+  ActiveRecord::Migration.verbose = false
+
+  load(File.dirname(__FILE__) + '/schema.rb')
+  load_schemes!
+  load(File.dirname(__FILE__) + '/models.rb')
+end
 
 reset_database!

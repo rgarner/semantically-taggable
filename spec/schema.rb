@@ -30,6 +30,22 @@ ActiveRecord::Schema.define :version => 0 do
     t.boolean :polyhierarchical, :default => false
   end
 
+  # Transitive closure table for multiple parent tags
+  create_table :tag_parentages, :id => false, :force => true do |t|
+    t.integer :parent_tag_id
+    t.integer :child_tag_id
+    t.integer :distance, :default => 1
+  end
+
+  add_index :tag_parentages, [:parent_tag_id, :child_tag_id, :distance], :uniq => :true, :name => 'index_tag_parentages_on_parent_child_distance'
+
+  create_table :related_tags, :id => false, :force => true do |t|
+    t.integer :tag_id
+    t.integer :related_tag_id
+  end
+
+  add_index :related_tags, [:tag_id, :related_tag_id], :uniq => :true
+
   # Tables for testing models from here on in
 
   create_table :articles, :force => true do |t|

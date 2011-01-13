@@ -29,11 +29,28 @@ class SemanticallyTaggableMigration < ActiveRecord::Migration
 
     add_index :taggings, :tag_id
     add_index :taggings, [:taggable_id, :taggable_type]
+
+    create_table :tag_parentages, :id => false do |t|
+      t.integer :parent_tag_id
+      t.integer :child_tag_id
+      t.integer :distance, :default => 1
+    end
+
+    add_index :tag_parentages, [:parent_tag_id, :child_tag_id, :distance], :uniq => :true, :name => 'index_tag_parentages_on_parent_child_distance'
+
+    create_table :related_tags, :id => false, :force => true do |t|
+      t.integer :tag_id
+      t.integer :related_tag_id
+    end
+
+    add_index :related_tags, [:tag_id, :related_tag_id], :uniq => :true
   end
 
   def self.down
     drop_table :schemes
     drop_table :taggings
     drop_table :tags
+    drop_table :tag_parentages
+    drop_table :related_tags
   end
 end
