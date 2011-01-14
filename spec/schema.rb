@@ -37,7 +37,7 @@ ActiveRecord::Schema.define :version => 0 do
     t.integer :distance, :default => 1
   end
 
-  add_index :tag_parentages, [:parent_tag_id, :child_tag_id, :distance], :uniq => :true, :name => 'index_tag_parentages_on_parent_child_distance'
+  add_index :tag_parentages, [:parent_tag_id, :child_tag_id, :distance], :unique => :true, :name => 'index_tag_parentages_on_parent_child_distance'
 
   create_table :related_tags, :id => false, :force => true do |t|
     t.integer :tag_id

@@ -11,11 +11,11 @@ module SemanticallyTaggable
     has_many :narrower_tag_relations, :class_name => 'SemanticallyTaggable::TagParentage', :foreign_key => 'parent_tag_id', :dependent => :destroy
 
     has_many :broader_tags,
-             :through => :broader_tag_relations,
+             :through => :broader_tag_relations, :uniq => :true,
              :class_name => 'SemanticallyTaggable::Tag', :source => :parent_tag
 
     has_many :narrower_tags,
-             :through => :narrower_tag_relations,
+             :through => :narrower_tag_relations, :uniq => :true,
              :class_name => 'SemanticallyTaggable::Tag', :source => :child_tag
 
     # Bidirectional HABTM using two rows to represent both directions of self-reference
@@ -90,7 +90,7 @@ module SemanticallyTaggable
     end
 
     def create_synonyms(*synonyms)
-      synonyms = synonyms.to_a.flatten
+      synonyms = synonyms.to_a.flatten.uniq
       synonyms.each {|synonym| self.synonyms << SemanticallyTaggable::Synonym.find_or_create_by_name(synonym)}
     end
 

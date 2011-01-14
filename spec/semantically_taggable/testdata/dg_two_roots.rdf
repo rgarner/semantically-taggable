@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:skos="http://www.w3.org/2004/02/skos/core#">
+
+  <skos:Concept rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/2260">
+    <skos:prefLabel>Directgov Taxonomy</skos:prefLabel>
+    <skos:inConceptScheme rdf:resource="http://syndication.direct.gov.uk/schemes/dg"/>
+  </skos:Concept>
+
+  <skos:Concept rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/2261">
+    <skos:prefLabel>Directgov Taxonomy2</skos:prefLabel>
+    <skos:inConceptScheme rdf:resource="http://syndication.direct.gov.uk/schemes/dg"/>
+  </skos:Concept>
+
+</rdf:RDF>

@@ -62,11 +62,8 @@ describe SemanticallyTaggable::Tag do
             @parent.save
           end
 
-          it "should have the parent as a broader tag of the child" do
-            @child.broader_tags.should include(@parent)
-          end
-
-          specify { @parent.should have(1).narrower_tags }
+          specify { @child.broader_tags.should include(@parent) }
+          specify { @parent.narrower_tags.should include(@child) }
         end
 
         describe "when assigning with broader" do
@@ -76,12 +73,22 @@ describe SemanticallyTaggable::Tag do
             @parent.reload
           end
 
-          it "should have the parent as a broader tag of the child" do
-            @child.broader_tags.should include(@parent)
-          end
-
-          specify { @parent.should have(1).narrower_tags }
+          specify { @child.broader_tags.should include(@parent) }
+          specify { @parent.narrower_tags.should include(@child) }
         end
+
+#        describe "when assigning from both ends, such as might happen in the import" do
+#          before do
+#            @parent.narrower_tags << @child
+#            @child.broader_tags << @parent
+#
+#            @child.save
+#            @parent.save
+#          end
+#
+#          specify { @parent.should have(1).narrower_tag }
+#          specify { @child.should have(1).broader_tag }
+#        end
       end
 
       describe "Related tags" do
@@ -144,6 +151,10 @@ describe SemanticallyTaggable::Tag do
       lambda {
         benefits_tag.create_synonyms('State benefits', 'Another synonym for state benefits')
       }.should change(SemanticallyTaggable::Synonym, :count).by(2)
+    end
+
+    it "should discard dupes" do
+      lambda { benefits_tag.create_synonyms('1','1') }.should change(SemanticallyTaggable::Synonym, :count).by(1)
     end
   end
 end

@@ -30,20 +30,30 @@ class SemanticallyTaggableMigration < ActiveRecord::Migration
     add_index :taggings, :tag_id
     add_index :taggings, [:taggable_id, :taggable_type]
 
-    create_table :tag_parentages, :id => false do |t|
+    # Transitive closure table for multiple parent tags
+    # Works bidirectionally to support model.narrower_tags and model.broader_tags
+    create_table :tag_parentages, :id => false, :force => true do |t|
       t.integer :parent_tag_id
       t.integer :child_tag_id
       t.integer :distance, :default => 1
     end
 
-    add_index :tag_parentages, [:parent_tag_id, :child_tag_id, :distance], :uniq => :true, :name => 'index_tag_parentages_on_parent_child_distance'
+    add_index :tag_parentages, [:parent_tag_id, :child_tag_id, :distance], :unique => :true,
+              :name => 'index_tag_parentages_on_parent_child_distance'
 
     create_table :related_tags, :id => false, :force => true do |t|
       t.integer :tag_id
       t.integer :related_tag_id
     end
 
-    add_index :related_tags, [:tag_id, :related_tag_id], :uniq => :true
+    add_index :related_tags, [:tag_id, :related_tag_id], :unique => :true
+
+    create_table :synonyms, :force => true do |t|
+      t.string :name
+      t.integer :tag_id
+    end
+
+    add_index :synonyms, :tag_id
   end
 
   def self.down
@@ -52,5 +62,6 @@ class SemanticallyTaggableMigration < ActiveRecord::Migration
     drop_table :tags
     drop_table :tag_parentages
     drop_table :related_tags
+    drop_table :synonyms
   end
 end
