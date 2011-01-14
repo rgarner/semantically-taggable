@@ -46,6 +46,13 @@ ActiveRecord::Schema.define :version => 0 do
 
   add_index :related_tags, [:tag_id, :related_tag_id], :uniq => :true
 
+  create_table :synonyms, :force => true do |t|
+    t.string :name
+    t.integer :tag_id
+  end
+
+  add_index :synonyms, :tag_id
+
   # Tables for testing models from here on in
 
   create_table :articles, :force => true do |t|

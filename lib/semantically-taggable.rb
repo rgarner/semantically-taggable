@@ -8,6 +8,8 @@ require "semantically_taggable/semantically_taggable/collection"
 require "semantically_taggable/semantically_taggable/cache"
 
 require "semantically_taggable/tag"
+require "semantically_taggable/synonym"
+require "semantically_taggable/tag_parentage"
 require "semantically_taggable/scheme"
 require "semantically_taggable/tagging"
 require "semantically_taggable/tag_list"

@@ -1,5 +1,3 @@
-require File.join(File.dirname(__FILE__), 'tag_parentage')
-
 module SemanticallyTaggable
   class Tag < ::ActiveRecord::Base
     attr_accessible :name
@@ -7,6 +5,7 @@ module SemanticallyTaggable
     ### ASSOCIATIONS:
 
     belongs_to :scheme
+    has_many :synonyms
 
     has_many :broader_tag_relations, :class_name => 'SemanticallyTaggable::TagParentage', :foreign_key => 'child_tag_id'
     has_many :narrower_tag_relations, :class_name => 'SemanticallyTaggable::TagParentage', :foreign_key => 'parent_tag_id', :dependent => :destroy
@@ -88,6 +87,11 @@ module SemanticallyTaggable
 
     def count
       read_attribute(:count).to_i
+    end
+
+    def create_synonyms(*synonyms)
+      synonyms = synonyms.to_a.flatten
+      synonyms.each {|synonym| self.synonyms << SemanticallyTaggable::Synonym.find_or_create_by_name(synonym)}
     end
 
     class << self

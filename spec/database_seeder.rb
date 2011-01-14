@@ -24,13 +24,13 @@ end
 
 def reset_database!
   models = [
-      SemanticallyTaggable::Tag, SemanticallyTaggable::Tagging, Article, OtherTaggableModel, UntaggableModel
+      SemanticallyTaggable::Tag, SemanticallyTaggable::Tagging, SemanticallyTaggable::Synonym, Article, OtherTaggableModel, UntaggableModel
   ]
   models.each do |model|
     ActiveRecord::Base.connection.execute "DELETE FROM #{model.table_name}"
   end
 
-  %w{narrower_tags broader_tags related_tags tag_relations}.each do |table_name|
+  %w{tag_parentages}.each do |table_name|
     ActiveRecord::Base.connection.execute "DELETE FROM #{table_name}"
   end
 end
