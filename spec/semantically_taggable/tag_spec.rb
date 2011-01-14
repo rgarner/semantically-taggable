@@ -52,15 +52,6 @@ describe "Tree properties of a tag" do
       reset_database!
     end
 
-    it "should be an error to assign a parent-child relationship to tags from different schemes" do
-      parent = scheme.create_tag(:name => 'Parent')
-      child = other_scheme.create_tag(:name => 'Attempted Child')
-
-      parent.narrower_tags << child
-      parent.save.should be_false
-      parent.should have(1).error
-    end
-
     describe "Bidirectional associations" do
       before do
         @parent = scheme.create_tag(:name => 'Tax')

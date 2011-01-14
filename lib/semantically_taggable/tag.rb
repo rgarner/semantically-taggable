@@ -32,13 +32,6 @@ module SemanticallyTaggable
     validates_presence_of :name, :message => 'Tag must have a name'
     validates_uniqueness_of :name, :scope => 'scheme_id'
 
-    # TODO: put back :broader_terms when it works
-    validates_each :narrower_tags, :related_tags do |tag, attr, related_tags|
-      related_tags.each do |related|
-        tag.errors.add(attr, "must be in same scheme as related tag") unless related.scheme == tag.scheme
-      end
-    end
-
     ### SCOPES:
 
     def self.using_postgresql?
