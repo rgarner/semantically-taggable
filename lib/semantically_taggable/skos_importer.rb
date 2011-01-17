@@ -1,3 +1,5 @@
+require 'nokogiri'
+
 module SemanticallyTaggable
   class SkosImporter
     def initialize(skos_filename, scheme)
@@ -17,6 +19,7 @@ module SemanticallyTaggable
     end
 
     def import_synonyms
+      puts "Importing synonyms..."
       iterate_concepts do |concept, label|
         tag = SemanticallyTaggable::Tag.find_by_name label
         tag.create_synonyms(concept.xpath('skos:altLabel').collect(&:content))
@@ -24,6 +27,7 @@ module SemanticallyTaggable
     end
 
     def import_relations(*relations)
+      puts "Importing relations #{relations}"
       relations.each do |relation|
         iterate_concepts do |concept, label|
           tag = SemanticallyTaggable::Tag.find_by_name label
@@ -35,6 +39,7 @@ module SemanticallyTaggable
     end
 
     def import_concepts(&block)
+      puts "Importing concepts..."
       iterate_concepts do |concept, label|
         @scheme.create_tag(:name => label) do |tag|
           block.call tag, concept if block

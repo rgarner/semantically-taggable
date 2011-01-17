@@ -1,3 +1,7 @@
+module SemanticallyTaggable
+  require "railtie" if defined?(Rails)
+end
+
 require 'active_record'
 
 $LOAD_PATH.unshift(File.dirname(__FILE__))
