@@ -1,4 +1,4 @@
-= semantically_taggable
+= semantically-taggable
 
 A tagging system, based *extremely* heavily on acts_as_taggable_on (to the point of being a little grubby),
 but introduces tagging schemes and moves
@@ -6,7 +6,26 @@ context into tags (so, for example, "Environment" in a :green_tags scheme is not
 to "Environment" in an sysadmin's tagging scheme)}.  Also removes tagger/related capability, Postgres support and
 restricts compatibility to Rails 3 and above - so you need to be sure you need semantic tagging before using this!
 
-== Contributing to semantically_taggable
+== Using semantically-taggable
+
+Just add to your Rails 3 or higher application's Gemfile:
+
+  gem "semantically-taggable"
+
+Due to https://rails.lighthouseapp.com/projects/8994/tickets/6233 , you'll also need to establish a base connection
+to your database before semantically-taggable loads.  Add the following to application.rb immediately following the call
+to require "rails/all":
+
+    # Workaround for semantically-taggable's habtm
+    database_yml = File.expand_path('../database.yml', __FILE__)
+    if File.exists?(database_yml)
+      active_record_configuration = YAML.load_file(database_yml)[Rails.env]
+      ActiveRecord::Base.establish_connection(active_record_configuration)
+    else
+      raise "Please create #{database_yml} first to configure your database."
+    end
+
+== Contributing to semantically-taggable
  
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
 * Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it
