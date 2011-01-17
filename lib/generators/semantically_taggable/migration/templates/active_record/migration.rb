@@ -38,7 +38,7 @@ class SemanticallyTaggableMigration < ActiveRecord::Migration
       t.integer :distance, :default => 1
     end
 
-    add_index :tag_parentages, [:parent_tag_id, :child_tag_id, :distance], :unique => :true,
+    add_index :tag_parentages, [:parent_tag_id, :child_tag_id, :distance], :unique => true,
               :name => 'index_tag_parentages_on_parent_child_distance'
 
     create_table :related_tags, :id => false, :force => true do |t|
@@ -46,7 +46,7 @@ class SemanticallyTaggableMigration < ActiveRecord::Migration
       t.integer :related_tag_id
     end
 
-    add_index :related_tags, [:tag_id, :related_tag_id], :unique => :true
+    add_index :related_tags, [:tag_id, :related_tag_id], :unique => true
 
     create_table :synonyms, :force => true do |t|
       t.string :name
