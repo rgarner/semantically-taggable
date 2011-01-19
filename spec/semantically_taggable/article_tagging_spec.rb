@@ -24,8 +24,8 @@ describe "Tagging articles" do
     @article.tag_counts_on(:keywords).length.should == 2
   end
 
-  it "should be able to create tags" do
-    @article.ipsv_subject_list = "ruby, rails, css"
+  it "should be able to create tags using the scheme's delimiter" do
+    @article.ipsv_subject_list = "ruby; rails; css"
     @article.instance_variable_get("@ipsv_subject_list").instance_of?(SemanticallyTaggable::TagList).should be_true
     
     lambda { @article.save }.should change(SemanticallyTaggable::Tag, :count).by(3)
@@ -69,18 +69,18 @@ describe "Tagging articles" do
   end
 
   it "should be able to remove tags through list alone" do
-    @article.ipsv_subject_list = "ruby, rails, css"
+    @article.ipsv_subject_list = "ruby; rails; css"
     @article.save
     @article.reload
     @article.should have(3).ipsv_subjects
-    @article.ipsv_subject_list = "ruby, rails"
+    @article.ipsv_subject_list = "ruby; rails"
     @article.save
     @article.reload
     @article.should have(2).ipsv_subjects
   end
 
   it "should be able to find by tag with scheme" do
-    @article.ipsv_subject_list = "ruby, rails, css"
+    @article.ipsv_subject_list = "ruby; rails; css"
     @article.keyword_list = "bob, charlie"
     @article.save
 
@@ -142,9 +142,9 @@ describe "Tagging articles" do
   end
 
   it "should be able to find tagged" do
-    bob = Article.create(:name => "Bob", :keyword_list => "fitter, happier, more productive", :ipsv_subject_list => "ruby, rails, css")
-    frank = Article.create(:name => "Frank", :keyword_list => "weaker, depressed, inefficient", :ipsv_subject_list => "ruby, rails, css")
-    steve = Article.create(:name => 'Steve', :keyword_list => 'fitter, happier, more productive', :ipsv_subject_list => 'c++, java, ruby')
+    bob = Article.create(:name => "Bob", :keyword_list => "fitter, happier, more productive", :ipsv_subject_list => "ruby; rails; css")
+    frank = Article.create(:name => "Frank", :keyword_list => "weaker, depressed, inefficient", :ipsv_subject_list => "ruby; rails; css")
+    steve = Article.create(:name => 'Steve', :keyword_list => 'fitter, happier, more productive', :ipsv_subject_list => 'c++; java; ruby')
 
     Article.tagged_with("ruby", :on => :ipsv_subjects, :order => 'articles.name').to_a.should == [bob, frank, steve]
     Article.tagged_with("ruby, rails", :on => :ipsv_subjects, :order => 'articles.name').to_a.should == [bob, frank]
@@ -162,9 +162,9 @@ describe "Tagging articles" do
   end
 
   it "should be able to find tagged with any tag" do
-    bob = Article.create(:name => "Bob", :keyword_list => "fitter, happier, more productive", :ipsv_subject_list => "ruby, rails, css")
-    frank = Article.create(:name => "Frank", :keyword_list => "weaker, depressed, inefficient", :ipsv_subject_list => "ruby, rails, css")
-    steve = Article.create(:name => 'Steve', :keyword_list => 'fitter, happier, more productive', :ipsv_subject_list => 'c++, java, ruby')
+    bob = Article.create(:name => "Bob", :keyword_list => "fitter, happier, more productive", :ipsv_subject_list => "ruby; rails; css")
+    frank = Article.create(:name => "Frank", :keyword_list => "weaker, depressed, inefficient", :ipsv_subject_list => "ruby; rails; css")
+    steve = Article.create(:name => 'Steve', :keyword_list => 'fitter, happier, more productive', :ipsv_subject_list => 'c++; java; ruby')
 
     Article.tagged_with(["ruby", "java"], :on => :keywords, :order => 'articles.name', :any => true).to_a.should == [bob, frank, steve]
     Article.tagged_with(["c++", "fitter"], :on => :keywords, :order => 'articles.name', :any => true).to_a.should == [bob, steve]
@@ -172,9 +172,9 @@ describe "Tagging articles" do
   end
 
   it "should be able to use named scopes to chain tag finds" do
-    bob = Article.create(:name => "Bob", :keyword_list => "fitter, happier, more productive", :ipsv_subject_list => "ruby, rails, css")
-    frank = Article.create(:name => "Frank", :keyword_list => "weaker, depressed, inefficient", :ipsv_subject_list => "ruby, rails, css")
-    steve = Article.create(:name => 'Steve', :keyword_list => 'fitter, happier, more productive', :ipsv_subject_list => 'c++, java, python')
+    bob = Article.create(:name => "Bob", :keyword_list => "fitter, happier, more productive", :ipsv_subject_list => "ruby; rails; css")
+    frank = Article.create(:name => "Frank", :keyword_list => "weaker, depressed, inefficient", :ipsv_subject_list => "ruby; rails; css")
+    steve = Article.create(:name => 'Steve', :keyword_list => 'fitter, happier, more productive', :ipsv_subject_list => 'c++; java; python')
 
     # Let's only find those productive Rails developers
     Article.tagged_with('rails', :on => :ipsv_subjects, :order => 'articles.name').to_a.should == [bob, frank]

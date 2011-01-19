@@ -209,8 +209,9 @@ module SemanticallyTaggable::Taggable
       def set_tag_list_on(scheme_name, new_list)
         add_custom_scheme_name(scheme_name)
 
+        scheme = SemanticallyTaggable::Scheme.by_name(scheme_name)
         variable_name = "@#{scheme_name.to_s.singularize}_list"
-        instance_variable_set(variable_name, SemanticallyTaggable::TagList.from(new_list))
+        instance_variable_set(variable_name, SemanticallyTaggable::TagList.from(new_list, scheme.delimiter))
       end
 
       def tagging_scheme_names

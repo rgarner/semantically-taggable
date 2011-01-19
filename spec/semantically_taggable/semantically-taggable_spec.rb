@@ -65,8 +65,8 @@ describe "Semantically Taggable" do
     end
   end
 
-  describe 'Tagging Contexts' do
-    it 'should eliminate duplicate tagging scheme names ' do
+  describe 'Tagging scheme names' do
+    it 'should eliminate duplicate tagging scheme names' do
       Article.semantically_taggable(:keywords, :keywords)
       Article.scheme_names.freq[:keywords].should_not == 3
     end
