@@ -38,6 +38,8 @@ class SemanticallyTaggableMigration < ActiveRecord::Migration
       t.integer :distance, :default => 1
     end
 
+    add_index :tag_parentages, :parent_tag_id
+    add_index :tag_parentages, :child_tag_id
     add_index :tag_parentages, [:parent_tag_id, :child_tag_id, :distance], :unique => true,
               :name => 'index_tag_parentages_on_parent_child_distance'
 

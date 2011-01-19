@@ -7,8 +7,12 @@ module SemanticallyTaggable
     belongs_to :scheme
     has_many :synonyms
 
-    has_many :broader_tag_relations, :class_name => 'SemanticallyTaggable::TagParentage', :foreign_key => 'child_tag_id'
-    has_many :narrower_tag_relations, :class_name => 'SemanticallyTaggable::TagParentage', :foreign_key => 'parent_tag_id', :dependent => :destroy
+    has_many :broader_tag_relations, :class_name => 'SemanticallyTaggable::TagParentage',
+             :foreign_key => 'child_tag_id',
+             :conditions => 'distance = 1'
+    has_many :narrower_tag_relations, :class_name => 'SemanticallyTaggable::TagParentage',
+             :foreign_key => 'parent_tag_id', :dependent => :destroy,
+             :conditions => 'distance = 1'
 
     has_many :broader_tags,
              :through => :broader_tag_relations, :uniq => :true,

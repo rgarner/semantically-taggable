@@ -8,10 +8,10 @@ module SemanticallyTaggable::Taggable
         attr_writer :custom_scheme_names
         after_save :save_tags
       end
-      
+
       base.initialize_semantically_taggable_core
     end
-    
+
     module ClassMethods
       def initialize_semantically_taggable_core
         scheme_names.map(&:to_s).each do |scheme_name|
@@ -43,14 +43,14 @@ module SemanticallyTaggable::Taggable
               all_tags_list_on('#{scheme_name}')
             end
           )
-        end        
+        end
       end
-      
+
       def semantically_taggable(*args)
         super(*args)
         initialize_semantically_taggable_core
       end
-      
+
       # all column names are necessary for PostgreSQL group clause
       def grouped_column_names_for(object)
         object.column_names.map { |column| "#{object.table_name}.#{column}" }.join(", ")
@@ -83,7 +83,7 @@ module SemanticallyTaggable::Taggable
         conditions = []
 
 
-        # TODO: add tests for/support :exclude and :any with semantic tags
+        # TODO: add tests for/support :exclude, :any, :match_all with semantic tags
         if options.delete(:exclude)
           tags_conditions = tag_list.map { |t| sanitize_sql(["tags.name LIKE ?", t]) }.join(" OR ")
           conditions << "#{table_name}.#{primary_key} NOT IN (SELECT #{SemanticallyTaggable::Tagging.table_name}.taggable_id FROM taggings JOIN tags ON taggings.tag_id = tags.id AND (#{tags_conditions}) WHERE taggings.taggable_type = #{quote_value(base_class.name)})"
@@ -105,7 +105,9 @@ module SemanticallyTaggable::Taggable
             tagging_join  = "JOIN #{SemanticallyTaggable::Tagging.table_name} #{taggings_alias}" +
                             "  ON #{taggings_alias}.taggable_id = #{table_name}.#{primary_key}" +
                             " AND #{taggings_alias}.taggable_type = #{quote_value(base_class.name)}" +
-                            " AND #{taggings_alias}.tag_id = #{tag.id}"
+                            (scheme.polyhierarchical ?
+                              " AND #{taggings_alias}.tag_id IN (SELECT #{tag.id} UNION SELECT child_tag_id FROM tag_parentages WHERE parent_tag_id = #{tag.id})" :
+                              " AND #{taggings_alias}.tag_id = #{tag.id}")
 
             joins << tagging_join
           end
@@ -134,8 +136,8 @@ module SemanticallyTaggable::Taggable
       def is_taggable?
         true
       end
-    end    
-    
+    end
+
     module InstanceMethods
       # all column names are necessary for PostgreSQL group clause
       def grouped_column_names_for(object)
@@ -187,7 +189,7 @@ module SemanticallyTaggable::Taggable
 
         opts  =  ["#{tagging_table_name}.context = ?", scheme_name.to_s]
         scope = base_tags.where(opts)
-        
+
         if SemanticallyTaggable::Tag.using_postgresql?
           group_columns = grouped_column_names_for(SemanticallyTaggable::Tag)
           scope = scope.order("max(#{tagging_table_name}.created_at)").group(group_columns)
@@ -220,7 +222,7 @@ module SemanticallyTaggable::Taggable
           instance_variable_set("@#{scheme_name.to_s.singularize}_list", nil)
           instance_variable_set("@all_#{scheme_name.to_s.singularize}_list", nil)
         end
-      
+
         super(*args)
       end
 
@@ -236,7 +238,7 @@ module SemanticallyTaggable::Taggable
           current_tags = tags_on(scheme_name)
           old_tags     = current_tags - tag_list
           new_tags     = tag_list     - current_tags
-          
+
           # Find taggings to remove:
           old_taggings = taggings.joins(:tag => :scheme) \
             .where(:schemes => { :name => scheme_name.to_s}, :tag_id => old_tags).all

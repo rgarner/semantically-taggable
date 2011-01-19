@@ -27,7 +27,7 @@ module SemanticallyTaggable
     end
 
     def import_relations(*relations)
-      puts "Importing relations #{relations}"
+      puts "Importing relations #{relations.join ', '}"
       relations.each do |relation|
         iterate_concepts do |concept, label|
           tag = SemanticallyTaggable::Tag.find_by_name label
