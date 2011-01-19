@@ -19,6 +19,8 @@ module SemanticallyTaggable
              :class_name => 'SemanticallyTaggable::Tag', :source => :child_tag
 
     # Bidirectional HABTM using two rows to represent both directions of self-reference
+    # Note that this requires a query at load time and hence a workaround paste until I can
+    # figure out how a railtie could make the connection.  See README.rdoc
     has_and_belongs_to_many :related_tags, :class_name => 'SemanticallyTaggable::Tag',
                             :association_foreign_key => 'related_tag_id', :join_table => 'related_tags',
                             :insert_sql => 'INSERT INTO related_tags (`tag_id`, `related_tag_id`) VALUES (#{id}, #{record.id}), (#{record.id}, #{id})',
@@ -74,8 +76,6 @@ module SemanticallyTaggable
 
       existing_tags + created_tags
     end
-
-    ### INSTANCE METHODS:
 
     def ==(object)
       super || (object.is_a?(Tag) && name == object.name)

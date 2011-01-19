@@ -21,15 +21,11 @@ describe "Tag creation" do
   end
 end
 
-def import_rdf filename
-  abridged = File.join(File.dirname(__FILE__), "testdata/#{filename}")
-  scheme.import_skos(abridged) do |tag, node|
-    tag.original_id = node['resource'].match(%r{.*/([0-9]*)$})[1]
-  end
-end
-
 describe "Importing from SKOS" do
+  include SharedSpecHelpers
+
   let(:scheme) { SemanticallyTaggable::Scheme.by_name(:dg_topics) }
+  set(:other_scheme) { SemanticallyTaggable::Scheme.by_name(:keywords) }
 
   describe "Multiple roots" do
     it "should not allow two roots" do
@@ -45,14 +41,16 @@ describe "Importing from SKOS" do
       import_rdf('dg_abridged.rdf')
     end
 
-    let(:root_tag) { SemanticallyTaggable::Tag.find_by_name('Directgov taxonomy') }
-
     it "should have some tags" do
       SemanticallyTaggable::Tag.count.should > 0
     end
 
     it "should have only one root tag in this scheme" do
-      pending "What's the interface for finding a root tag in a poly scheme?"
+      scheme.root_tag.name.should == 'Directgov Taxonomy'
+    end
+
+    it "should disallow root tag requests to non-hierarchical schemes" do
+      lambda { other_scheme.root_tag }.should raise_error(ArgumentError)
     end
 
     it "should keep original ids of concepts" do
@@ -64,7 +62,7 @@ describe "Importing from SKOS" do
     end
 
     it "should have concepts with multiple children" do
-      root_tag.should have(4).narrower_tags
+      scheme.root_tag.should have(3).narrower_tags
     end
 
     it "should have concepts with multiple synonyms" do

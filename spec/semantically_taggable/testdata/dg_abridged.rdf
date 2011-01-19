@@ -6,7 +6,6 @@
     <skos:prefLabel>Directgov Taxonomy</skos:prefLabel>
     <skos:narrower rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/253"/>
     <skos:narrower rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/303"/>
-    <skos:narrower rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/307"/>
     <skos:narrower rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/313"/>
     <skos:inConceptScheme rdf:resource="http://syndication.direct.gov.uk/schemes/dg"/>
   </skos:Concept>
@@ -44,8 +43,15 @@
   <skos:Concept rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/307">
     <skos:prefLabel>NHS</skos:prefLabel>
     <skos:altLabel>National Health Service</skos:altLabel>
-    <skos:broader rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/2260"/>
+    <skos:broader rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/303"/>
+    <skos:narrower rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/762"/>
     <skos:related rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/303"/>
+    <skos:inConceptScheme rdf:resource="http://syndication.direct.gov.uk/schemes/dg"/>
+  </skos:Concept>
+
+  <skos:Concept rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/762">
+    <skos:prefLabel>NHS Direct</skos:prefLabel>
+    <skos:broader rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/307"/>
     <skos:inConceptScheme rdf:resource="http://syndication.direct.gov.uk/schemes/dg"/>
   </skos:Concept>
 

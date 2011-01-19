@@ -24,6 +24,18 @@ module SemanticallyTaggable
       end
     end
 
+    def root_tag
+      raise ArgumentError, "No root tags in non-hierarchical schemes" unless polyhierarchical
+      Tag.find_by_sql(%{
+        SELECT DISTINCT t.* FROM tags t
+        INNER JOIN tag_parentages tp on t.id = tp.parent_tag_id
+        LEFT JOIN tag_parentages children ON tp.parent_tag_id = children.child_tag_id
+        INNER JOIN schemes s on s.id = t.scheme_id
+        WHERE children.child_tag_id IS NULL
+        AND s.name = 'dg_topics'
+      }).first
+    end
+
     def import_skos(skos_filename, &block)
       SkosImporter.new(skos_filename, self).import(&block)
     end

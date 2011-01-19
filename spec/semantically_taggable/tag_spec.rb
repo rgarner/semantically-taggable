@@ -40,14 +40,6 @@ describe SemanticallyTaggable::Tag do
   end
 
   describe "Tree properties of a tag" do
-    describe "The unhappy path" do
-      it "should not allow creation of a tag with a parent in a non-hierarchical scheme" do
-        pending "To allow checkin"
-        scheme = SemanticallyTaggable::Scheme.by_name(:ipsv_subjects)
-        lambda { scheme.create_tag(:name => 'fail', :parent => SemanticallyTaggable::Tag.new) }.should raise_error(ArgumentError)
-      end
-    end
-
     describe "Tag relationships" do
       describe "Bidirectional associations" do
         before do

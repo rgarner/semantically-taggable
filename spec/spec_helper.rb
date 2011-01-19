@@ -34,6 +34,7 @@ end
 
 require File.expand_path('../../lib/semantically-taggable', __FILE__)
 require 'database_seeder'
+require 'semantically_taggable/shared_spec_helpers'
 
 unless [].respond_to?(:freq)
   class Array
@@ -67,6 +68,22 @@ def set(variable_name, &block)
         i.reload unless i.new_record?
       end
     end
+  end
+end
+
+RSpec::Matchers.define :parent do |expected|
+  match do |actual|
+    sql = "SELECT * FROM tag_parentages WHERE parent_tag_id = #{actual.id} AND child_tag_id = #{expected.id} AND distance = #{@distance}"
+    rows = SemanticallyTaggable::TagParentage.find_by_sql(sql)
+    rows.length == 1
+  end
+
+  failure_message_for_should do
+    "Expected #{actual.name} to parent #{expected.name} at a distance of #{@distance}"
+  end
+
+  chain :at_distance do |distance|
+    @distance = distance
   end
 end
 
