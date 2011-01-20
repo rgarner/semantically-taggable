@@ -12,7 +12,11 @@ module SemanticallyTaggable
     # CLASS METHODS
 
     def self.by_name(name)
-      Scheme.find_by_name!(name.to_s)
+      @@schemes ||= Scheme.all.inject({}) do |schemes, scheme|
+        schemes[scheme.name.to_sym] = scheme
+        schemes
+      end
+      @@schemes[name.to_sym] || raise(ActiveRecord::RecordNotFound)
     end
 
     # INSTANCE METHODS
