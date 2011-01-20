@@ -161,14 +161,16 @@ describe "Tagging articles" do
     Article.tagged_with("sad, happier", :on => :keywords).should_not include(bob)
   end
 
-  it "should be able to find tagged with any tag" do
+  it "should be able to find tagged with any tag in a given scheme" do
     bob = Article.create(:name => "Bob", :keyword_list => "fitter, happier, more productive", :ipsv_subject_list => "ruby; rails; css")
     frank = Article.create(:name => "Frank", :keyword_list => "weaker, depressed, inefficient", :ipsv_subject_list => "ruby; rails; css")
-    steve = Article.create(:name => 'Steve', :keyword_list => 'fitter, happier, more productive', :ipsv_subject_list => 'c++; java; ruby')
+    steve = Article.create(:name => 'Steve', :keyword_list => 'fitter, happier, more productive', :ipsv_subject_list => 'c++; java;')
+    # Jane shouldn't show up in a search on keywords
+    jane  = Article.create(:name => 'Jane', :keyword_list => 'ruby; many other things')
 
-    Article.tagged_with(["ruby", "java"], :on => :keywords, :order => 'articles.name', :any => true).to_a.should == [bob, frank, steve]
+    Article.tagged_with(["ruby", "java"], :on => :ipsv_subjects, :order => 'articles.name', :any => true).to_a.should == [bob, frank, steve]
     Article.tagged_with(["c++", "fitter"], :on => :keywords, :order => 'articles.name', :any => true).to_a.should == [bob, steve]
-    Article.tagged_with(["depressed", "css"], :on => :keywords, :order => 'articles.name', :any => true).to_a.should == [bob, frank]
+    Article.tagged_with(["depressed", "css"], :on => :keywords, :order => 'articles.name', :any => true).to_a.should == [frank]
   end
 
   it "should be able to use named scopes to chain tag finds" do
@@ -185,17 +187,20 @@ describe "Tagging articles" do
   it "should be able to find tagged with only the matching tags" do
     Article.create(:name => "Bob", :keyword_list => "lazy, happier")
     Article.create(:name => "Frank", :keyword_list => "fitter, happier, inefficient")
+    jane = Article.create(:name => "Jane", :ipsv_subject_list => "fitter; happier")
     steve = Article.create(:name => 'Steve', :keyword_list => "fitter, happier")
 
     Article.tagged_with("fitter, happier", :on => :keywords, :match_all => true).to_a.should == [steve]
+    Article.tagged_with("fitter, happier", :on => :ipsv_subjects, :match_all => true).to_a.should == [jane]
   end
 
   it "should be able to find tagged with some excluded tags" do
     bob = Article.create(:name => "Bob", :keyword_list => "happier, lazy")
     frank = Article.create(:name => "Frank", :keyword_list => "happier")
     steve = Article.create(:name => 'Steve', :keyword_list => "happier")
+    jane = Article.create(:name => 'Jane', :ipsv_subject_list => "happier; lazy")
 
-    Article.tagged_with("lazy", :on => :keywords, :exclude => true).to_a.should == [frank, steve]
+    Article.tagged_with("lazy", :on => :keywords, :exclude => true).to_a.should == [frank, steve, jane]
   end
 
   it "should not create duplicate taggings" do

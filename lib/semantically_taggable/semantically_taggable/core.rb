@@ -82,16 +82,25 @@ module SemanticallyTaggable::Taggable
         joins = []
         conditions = []
 
-
-        # TODO: add tests for/support :exclude, :any, :match_all with semantic tags
         if options.delete(:exclude)
-          tags_conditions = tag_list.map { |t| sanitize_sql(["tags.name LIKE ?", t]) }.join(" OR ")
-          conditions << "#{table_name}.#{primary_key} NOT IN (SELECT #{SemanticallyTaggable::Tagging.table_name}.taggable_id FROM taggings JOIN tags ON taggings.tag_id = tags.id AND (#{tags_conditions}) WHERE taggings.taggable_type = #{quote_value(base_class.name)})"
+          tags_conditions = "(#{tag_list.map { |t| sanitize_sql(["tags.name LIKE ?", t]) }.join(" OR ")})"\
+            + " AND tags.scheme_id = #{scheme.id}"
+          conditions << %{
+            #{table_name}.#{primary_key} NOT IN (
+              SELECT #{SemanticallyTaggable::Tagging.table_name}.taggable_id FROM taggings
+              JOIN tags ON taggings.tag_id = tags.id AND (#{tags_conditions})
+              WHERE taggings.taggable_type = #{quote_value(base_class.name)})
+          }
 
         elsif options.delete(:any)
-          tags_conditions = tag_list.map { |t| sanitize_sql(["tags.name LIKE ?", t]) }.join(" OR ")
-          conditions << "#{table_name}.#{primary_key} IN (SELECT taggings.taggable_id FROM taggings JOIN tags ON taggings.tag_id = tags.id AND (#{tags_conditions}) WHERE taggings.taggable_type = #{quote_value(base_class.name)})"
-
+          tags_conditions = "(#{tag_list.map { |t| sanitize_sql(["tags.name LIKE ?", t]) }.join(" OR ")})"\
+            + " AND tags.scheme_id = #{scheme.id}"
+          conditions << %{
+            #{table_name}.#{primary_key} IN (
+              SELECT taggings.taggable_id FROM taggings
+              JOIN tags ON taggings.tag_id = tags.id AND #{tags_conditions}
+              WHERE taggings.taggable_type = #{quote_value(base_class.name)})
+          }
         else
           tags = scheme.tags.named_any(tag_list)
           return scoped(:conditions => "1 = 0") unless tags.length == tag_list.length
