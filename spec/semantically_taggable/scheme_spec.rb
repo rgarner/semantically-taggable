@@ -38,11 +38,15 @@ describe "Importing from SKOS" do
   describe "Abridged import" do
     before :all do
       reset_database!
+      # Some spoilers to check we're looking in the right scheme only
+      other_scheme.create_tag(:name => 'Travel')
+      other_scheme.create_tag(:name => 'Job grants')
+      other_scheme.create_tag(:name => 'Directgov Taxonomy')
       import_rdf('dg_abridged.rdf')
     end
 
     it "should have some tags" do
-      SemanticallyTaggable::Tag.count.should > 0
+      scheme.tags.count.should > 0
     end
 
     it "should have only one root tag in this scheme" do
@@ -54,11 +58,11 @@ describe "Importing from SKOS" do
     end
 
     it "should keep original ids of concepts" do
-      SemanticallyTaggable::Tag.find_by_name('Travel').original_id.should == '313'
+      scheme.tags.find_by_name('Travel').original_id.should == '313'
     end
 
     it "should have concepts with multiple parents" do
-      SemanticallyTaggable::Tag.find_by_name('Travel health').should have(2).broader_tags
+      scheme.tags.find_by_name('Travel health').should have(2).broader_tags
     end
 
     it "should have concepts with multiple children" do
@@ -66,11 +70,11 @@ describe "Importing from SKOS" do
     end
 
     it "should have concepts with multiple synonyms" do
-      SemanticallyTaggable::Tag.find_by_name('Job grants').should have(4).synonyms
+      scheme.tags.find_by_name('Job grants').should have(4).synonyms
     end
 
     it "should have concepts with multiple related tags" do
-      SemanticallyTaggable::Tag.find_by_name('Health and care').should have(2).related_tags
+      scheme.tags.find_by_name('Health and care').should have(2).related_tags
     end
   end
 end

@@ -21,7 +21,7 @@ module SemanticallyTaggable
     def import_synonyms
       puts "Importing synonyms..."
       iterate_concepts do |concept, label|
-        tag = SemanticallyTaggable::Tag.find_by_name label
+        tag = @scheme.tags.find_by_name! label
         tag.create_synonyms(concept.xpath('skos:altLabel').collect(&:content))
       end
     end
@@ -30,7 +30,7 @@ module SemanticallyTaggable
       puts "Importing relations #{relations.join ', '}"
       relations.each do |relation|
         iterate_concepts do |concept, label|
-          tag = SemanticallyTaggable::Tag.find_by_name label
+          tag = @scheme.tags.find_by_name! label
           skos_element = "skos:#{relation}"
           others = concept.xpath(skos_element).collect { |other_node| lookup_tag(other_node) }
           tag.send("#{relation}_tags=".to_sym, others)
@@ -60,7 +60,7 @@ module SemanticallyTaggable
       url_xpath = "//skos:Concept[@rdf:resource='#{pointer_node['resource']}']"
       concept_node = pointer_node.at_xpath(url_xpath) || (raise RuntimeError, "Concept at #{url_xpath} not found")
       pref_label = concept_node.at_xpath('skos:prefLabel').content
-      Tag.find_by_name pref_label
+      @scheme.tags.find_by_name pref_label
     end
   end
 end
