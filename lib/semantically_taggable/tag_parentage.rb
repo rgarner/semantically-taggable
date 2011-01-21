@@ -9,10 +9,9 @@ module SemanticallyTaggable
 
       rows_affected = 1
       total_inserts = 0
-      distance = 1
       while rows_affected > 0 do
         rows_affected = ActiveRecord::Base.connection.update %{
-          INSERT INTO tag_parentages
+          INSERT IGNORE INTO tag_parentages
           SELECT DISTINCT
               p1.parent_tag_id,
               p2.child_tag_id,
@@ -20,10 +19,8 @@ module SemanticallyTaggable
           FROM
             tag_parentages AS p1
           INNER JOIN tag_parentages AS p2 ON p1.child_tag_id = p2.parent_tag_id
-          WHERE p1.distance = #{distance}
         }
         total_inserts += rows_affected
-        distance += 1
       end
       total_inserts
     end

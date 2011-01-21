@@ -7,4 +7,9 @@ namespace :import do
       tag.original_id = node['resource'].match(%r{.*/([0-9]*)$})[1]
     end
   end
+
+  desc "Refresh the tag_parentages table closure for indirect hierarchy tagging support"
+  task :refresh_closure => :environment do
+    SemanticallyTaggable::TagParentage.refresh_closure!
+  end
 end
