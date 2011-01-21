@@ -81,17 +81,16 @@ describe "Semantically Taggable" do
       Article.scheme_names.freq[:keywords].should == 1
     end
 
-    # TODO: should raise error?
     it "should not raise an error when passed nil" do
       lambda {
         Article.semantically_taggable()
-      }.should_not raise_error
+      }.should raise_error(ArgumentError)
     end
 
-    it "should not raise an error when passed [nil]" do
+    it "should raise an error when passed [nil]" do
       lambda {
         Article.semantically_taggable([nil])
-      }.should_not raise_error
+      }.should raise_error(ArgumentError)
     end
   end
 

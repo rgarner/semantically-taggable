@@ -15,6 +15,7 @@ module SemanticallyTaggable
     #   end
     def semantically_taggable(*scheme_names)
       scheme_names = scheme_names.to_a.flatten.compact.map(&:to_sym)
+      raise ArgumentError, "At least one scheme name required, none given" unless scheme_names.present?
 
       if taggable?
         write_inheritable_attribute(:scheme_names, (self.scheme_names + scheme_names).uniq)
