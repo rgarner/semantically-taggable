@@ -130,6 +130,7 @@ describe SemanticallyTaggable::Tag do
 
   describe "Tag synonyms" do
     let(:benefits_tag) { scheme.create_tag(:name => 'Benefits') }
+    let(:benefits_keyword) { other_scheme.create_tag(:name => 'Benefits') }
 
     it "should allow a tag to have synonyms" do
       benefits_tag.synonyms << SemanticallyTaggable::Synonym.new(:name => 'State Benefits')
@@ -147,6 +148,13 @@ describe SemanticallyTaggable::Tag do
 
     it "should discard dupes" do
       lambda { benefits_tag.create_synonyms('1','1') }.should change(SemanticallyTaggable::Synonym, :count).by(1)
+    end
+
+    it "should not cross-wire synonyms from different schemes" do
+      benefits_keyword.save
+      benefits_tag.save
+      lambda { benefits_tag.create_synonyms('dupe') }.should change(SemanticallyTaggable::Synonym, :count).by(1)
+      lambda { benefits_keyword.create_synonyms('dupe') }.should change(SemanticallyTaggable::Synonym, :count).by(1)
     end
   end
 end

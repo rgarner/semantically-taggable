@@ -95,7 +95,9 @@ module SemanticallyTaggable
 
     def create_synonyms(*synonyms)
       synonyms = synonyms.to_a.flatten.uniq
-      synonyms.each {|synonym| self.synonyms << SemanticallyTaggable::Synonym.find_or_create_by_name(synonym)}
+      synonyms.each do |synonym|
+        self.synonyms << SemanticallyTaggable::Synonym.create(:name => synonym, :tag => self)
+      end
     end
 
     class << self
