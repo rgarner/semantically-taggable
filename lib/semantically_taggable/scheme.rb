@@ -36,7 +36,7 @@ module SemanticallyTaggable
         LEFT JOIN tag_parentages children ON tp.parent_tag_id = children.child_tag_id
         INNER JOIN schemes s on s.id = t.scheme_id
         WHERE children.child_tag_id IS NULL
-        AND s.name = 'dg_topics'
+        AND s.name = '#{name}'
       }).first
     end
 
