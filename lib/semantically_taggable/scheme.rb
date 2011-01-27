@@ -16,7 +16,8 @@ module SemanticallyTaggable
         schemes[scheme.name.to_sym] = scheme
         schemes
       end
-      @@schemes[name.to_sym] || raise(ActiveRecord::RecordNotFound)
+      @@schemes[name.to_sym] || raise(ActiveRecord::RecordNotFound,
+                                      "SemanticallyTaggable::Scheme #{name.to_sym} not found (you will need to seed the schemes table)")
     end
 
     # INSTANCE METHODS
