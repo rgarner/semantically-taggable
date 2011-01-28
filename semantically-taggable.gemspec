@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{semantically-taggable}
-  s.version = "0.1.8"
+  s.version = "0.1.10"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Russell Garner"]
-  s.date = %q{2011-01-27}
+  s.date = %q{2011-01-28}
   s.description = %q{Based really very heavily on acts_as_taggable_on, but introduces tagging schemes and moves
   context into tags (so, for example, "Environment" in a 'green_tags' scheme is not semantically equivalent
   to "Environment" in an sysadmin's tagging scheme)}
@@ -34,6 +34,7 @@ Gem::Specification.new do |s|
     "lib/semantically_taggable/tag_list.rb",
     "lib/semantically_taggable/tag_parentage.rb",
     "lib/semantically_taggable/tagging.rb",
+    "lib/semantically_taggable/tags_helper.rb",
     "lib/tasks/import.rake",
     "spec/database.yml",
     "spec/database.yml.sample",
@@ -48,6 +49,7 @@ Gem::Specification.new do |s|
     "spec/semantically_taggable/tag_list_spec.rb",
     "spec/semantically_taggable/tag_parentage_spec.rb",
     "spec/semantically_taggable/tag_spec.rb",
+    "spec/semantically_taggable/tags_helper_spec.rb",
     "spec/semantically_taggable/testdata/dg_abridged.rdf",
     "spec/semantically_taggable/testdata/dg_two_roots.rdf",
     "spec/spec_helper.rb"
@@ -68,6 +70,7 @@ Gem::Specification.new do |s|
     "spec/semantically_taggable/tag_list_spec.rb",
     "spec/semantically_taggable/tag_parentage_spec.rb",
     "spec/semantically_taggable/tag_spec.rb",
+    "spec/semantically_taggable/tags_helper_spec.rb",
     "spec/spec_helper.rb"
   ]
 
