@@ -68,7 +68,6 @@ module SemanticallyTaggable::Taggable
 
         tagging_conditions = [
           taggable_conditions,
-          scope[:conditions],
           start_at_conditions,
           end_at_conditions
         ].compact.reverse
@@ -92,8 +91,6 @@ module SemanticallyTaggable::Taggable
 
         tag_joins = [
         ].compact
-
-        [tagging_joins, tag_joins].each(&:reverse!) if ActiveRecord::VERSION::MAJOR < 3
 
         ## Generate scope:
         tagging_scope = SemanticallyTaggable::Tagging.select("#{SemanticallyTaggable::Tagging.table_name}.tag_id, COUNT(#{SemanticallyTaggable::Tagging.table_name}.tag_id) AS tags_count")

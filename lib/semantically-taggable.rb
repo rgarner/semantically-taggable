@@ -18,6 +18,8 @@ require "semantically_taggable/scheme"
 require "semantically_taggable/tagging"
 require "semantically_taggable/tag_list"
 
+require "semantically_taggable/tags_helper"
+
 $LOAD_PATH.shift
 
 if defined?(ActiveRecord::Base)
