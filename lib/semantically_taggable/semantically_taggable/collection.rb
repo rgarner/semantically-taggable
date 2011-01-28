@@ -57,12 +57,14 @@ module SemanticallyTaggable::Taggable
 
         ## Generate conditions:
         options[:conditions] = sanitize_sql(options[:conditions]) if options[:conditions]     
+        scheme_name = options.delete(:on)
 
         start_at_conditions = sanitize_sql(["#{SemanticallyTaggable::Tagging.table_name}.created_at >= ?", options.delete(:start_at)]) if options[:start_at]
         end_at_conditions   = sanitize_sql(["#{SemanticallyTaggable::Tagging.table_name}.created_at <= ?", options.delete(:end_at)])   if options[:end_at]
         
         taggable_conditions  = sanitize_sql(["#{SemanticallyTaggable::Tagging.table_name}.taggable_type = ?", base_class.name])
         taggable_conditions << sanitize_sql([" AND #{SemanticallyTaggable::Tagging.table_name}.taggable_id = ?", options.delete(:id)])  if options[:id]
+        taggable_conditions << sanitize_sql([" AND #{SemanticallyTaggable::Scheme.table_name}.name = ?", scheme_name]) if scheme_name
 
         tagging_conditions = [
           taggable_conditions,
@@ -77,7 +79,11 @@ module SemanticallyTaggable::Taggable
         
         ## Generate joins:
         taggable_join = "INNER JOIN #{table_name} ON #{table_name}.#{primary_key} = #{SemanticallyTaggable::Tagging.table_name}.taggable_id"
-        taggable_join << " AND #{table_name}.#{inheritance_column} = '#{name}'" unless descends_from_active_record? # Current model is STI descendant, so add type checking to the join condition      
+        taggable_join << " AND #{table_name}.#{inheritance_column} = '#{name}'" unless descends_from_active_record? # Current model is STI descendant, so add type checking to the join condition
+        if scheme_name
+          taggable_join << " INNER JOIN tags on tags.id = taggings.tag_id "
+          taggable_join << " INNER JOIN schemes on schemes.id = tags.scheme_id "
+        end
 
         tagging_joins = [
           taggable_join,

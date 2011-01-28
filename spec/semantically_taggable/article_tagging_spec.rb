@@ -18,6 +18,7 @@ describe "Tagging articles" do
     Article.tag_counts_on(:keywords).all.should be_empty
 
     @article.keyword_list = ["awesome", "epic"]
+    @article.ipsv_subject_list = ["epic", "match"]
     @article.save
 
     Article.tag_counts_on(:keywords).length.should == 2
