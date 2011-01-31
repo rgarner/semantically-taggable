@@ -1,29 +1,70 @@
 = semantically-taggable
 
-A tagging system, based *extremely* heavily on acts_as_taggable_on (to the point of being a little grubby),
-but introduces tagging schemes and moves
-context into tags (so, for example, "Environment" in a :green_tags scheme is not semantically equivalent
-to "Environment" in an sysadmin's tagging scheme)}.  Also removes tagger/related capability, Postgres support and
+A tagging system, based *extremely* heavily on acts_as_taggable_on (to the point of being a little grubby, so please,
+if you need a general non-semantic tagging system, see Mike Bleigh's excellent
+https://github.com/mbleigh/acts-as-taggable-on), but which moves the <tt>acts-as-taggable-on</tt> 'context' concept into
+semantic tagging _schemes_. So, for example, "Environment" in a +green_tags+ scheme is not semantically equivalent
+to "Environment" in a +sysadmin_tags+ tagging scheme.
+
+It also adds support for (poly)hierarchical thesaurus/taxonomy with SKOS import support and hierarchy tagging.
+For example, if you had a hierarchical taxonomy called +animal_classifications+ which had a topic hierarchy
+Animals > Marsupials > Kangaroo, the following code would create a kangaroo called "Skippy" and then retrieve him
+via hierarchy tagging:
+
+  class Animal < ActiveRecord::Base
+    semantically_taggable :animal_classifications
+  end
+
+  animal = Animal.create(:name => 'Skippy', :animal_classification_list => 'Kangaroo')
+  
+  Animal.tagged_with('Marsupials', :on => :animal_classifications)
+  => #<Animal id: 1, Name: "Skippy">
+
+Also removes tagger/related capability, Postgres support and
 restricts compatibility to Rails 3 and above - so you need to be sure you need semantic tagging before using this!
 
 == Using semantically-taggable
 
-Just add to your Rails 3 or higher application's Gemfile:
+Add to your Rails 3 or higher application's Gemfile:
 
   gem "semantically-taggable"
 
-Due to https://rails.lighthouseapp.com/projects/8994/tickets/6233 , you'll also need to establish a base connection
-to your database before semantically-taggable loads.  Add the following to application.rb immediately following the call
-to require "rails/all":
+You'll need to run the rails migration generator:
 
-    # Workaround for semantically-taggable's habtm
-    database_yml = File.expand_path('../database.yml', __FILE__)
-    if File.exists?(database_yml)
-      active_record_configuration = YAML.load_file(database_yml)[Rails.env]
-      ActiveRecord::Base.establish_connection(active_record_configuration)
-    else
-      raise "Please create #{database_yml} first to configure your database."
-    end
+  rails g semantically_taggable:migration
+
+This will create a migration in your rails project.  Run with
+
+  rake db:migrate
+
+This gem is purposely less ad-hoc than <tt>acts-as-taggable-on</tt>.  All tags must exist in a <tt>SemanticallyTaggable::Scheme</tt>.
+This means you'll need to add schemes to your database before you can tag.
+The easiest way to do this is by using <tt>rake db:seed</tt>.  An example <tt>db/seeds.rb</tt> file
+may help here:
+
+  SemanticallyTaggable::Scheme.create(
+      [
+          {
+              :name => 'taxonomy_topics', :meta_name => 'DC.subject', :meta_scheme => 'MyTaxonomy.Topic',
+              :description => 'A polyhierarchical taxonomy', :delimiter => ';', :polyhierarchical => true
+          },
+          {
+              :name => 'keywords', :meta_name => 'keywords',
+              :description => 'Folksonomic keyword taggings'
+          },
+      ]
+  )
+
+== Important notes for indirect tagging support in hierarchical schemes
+
+You'll need to import your taxonomy/thesaurus first.  Grab a handy SKOS file which your favourite tool has produced,
+and import to a scheme (which must be marked polyhierarchical) as follows:
+
+  rake import:skos[my_scheme_topics,db/my_skos_file.rdf]
+
+This will create your hierarchy, but to enable indirect tagging support, you'll also need
+
+  rake import:refresh_closure
 
 == Contributing to semantically-taggable
  

@@ -1,4 +1,5 @@
-Copyright (c) 2011 MBleigh / Russell Garner
+Copyright (c) 2011 Russell Garner
+Copyright (c) 2010 Mike Bleigh & Intridea Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
