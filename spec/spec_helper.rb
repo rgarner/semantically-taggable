@@ -20,8 +20,6 @@ Bundler.require
 
 require 'active_record'
 
-SEMANTICALLYTAGGABLE_SPECRUNNING = true
-
 ENV['DB'] ||= 'mysql'
 
 database_yml = File.expand_path('../database.yml', __FILE__)
