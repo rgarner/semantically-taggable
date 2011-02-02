@@ -15,7 +15,8 @@ module SemanticallyTaggable::Taggable
     module ClassMethods
       def initialize_semantically_taggable_core
         scheme_names.map(&:to_s).each do |scheme_name|
-          scheme = SemanticallyTaggable::Scheme.by_name(scheme_name)
+          scheme = SemanticallyTaggable::Scheme.by_name(scheme_name) rescue SemanticallyTaggable::Scheme.new(
+              :name => 'tmp', :id => 'initialization_only')
 
           singular_scheme_name  = scheme_name.to_s.singularize
           scheme_taggings      = "#{singular_scheme_name}_taggings".to_sym
