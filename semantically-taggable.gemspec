@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{semantically-taggable}
-  s.version = "0.1.12"
+  s.version = "0.1.13"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Russell Garner"]
-  s.date = %q{2011-01-31}
+  s.date = %q{2011-02-02}
   s.description = %q{Based really very heavily on acts_as_taggable_on, but introduces tagging schemes and moves
   context into tags (so, for example, "Environment" in a 'green_tags' scheme is not semantically equivalent
   to "Environment" in an sysadmin's tagging scheme)}
