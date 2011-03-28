@@ -2,7 +2,7 @@
 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
          xmlns:skos="http://www.w3.org/2004/02/skos/core#">
 
-  <skos:Concept rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/2260">
+  <skos:Concept rdf:about="http://syndication.direct.gov.uk/id/concept/dg/2260">
     <skos:prefLabel>Directgov Taxonomy</skos:prefLabel>
     <skos:narrower rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/253"/>
     <skos:narrower rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/303"/>
@@ -10,7 +10,7 @@
     <skos:inConceptScheme rdf:resource="http://syndication.direct.gov.uk/schemes/dg"/>
   </skos:Concept>
 
-  <skos:Concept rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/303">
+  <skos:Concept rdf:about="http://syndication.direct.gov.uk/id/concept/dg/303">
     <skos:prefLabel>Health and care</skos:prefLabel>
     <skos:broader rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/2260"/>
     <skos:narrower rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/960"/>
@@ -19,28 +19,28 @@
     <skos:inConceptScheme rdf:resource="http://syndication.direct.gov.uk/schemes/dg"/>
   </skos:Concept>
 
-  <skos:Concept rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/313">
+  <skos:Concept rdf:about="http://syndication.direct.gov.uk/id/concept/dg/313">
     <skos:prefLabel>Travel</skos:prefLabel>
     <skos:broader rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/2260"/>
     <skos:narrower rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/960"/>
     <skos:inConceptScheme rdf:resource="http://syndication.direct.gov.uk/schemes/dg"/>
   </skos:Concept>
 
-  <skos:Concept rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/960">
+  <skos:Concept rdf:about="http://syndication.direct.gov.uk/id/concept/dg/960">
     <skos:prefLabel>Travel health</skos:prefLabel>
     <skos:broader rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/303"/>
     <skos:broader rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/313"/>
     <skos:inConceptScheme rdf:resource="http://syndication.direct.gov.uk/schemes/dg"/>
   </skos:Concept>
 
-  <skos:Concept rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/541">
+  <skos:Concept rdf:about="http://syndication.direct.gov.uk/id/concept/dg/541">
     <skos:prefLabel>Health insurance</skos:prefLabel>
     <skos:broader rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/303"/>
     <skos:related rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/303"/>
     <skos:inConceptScheme rdf:resource="http://syndication.direct.gov.uk/schemes/dg"/>
   </skos:Concept>
 
-  <skos:Concept rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/307">
+  <skos:Concept rdf:about="http://syndication.direct.gov.uk/id/concept/dg/307">
     <skos:prefLabel>NHS</skos:prefLabel>
     <skos:altLabel>National Health Service</skos:altLabel>
     <skos:broader rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/303"/>
@@ -49,13 +49,13 @@
     <skos:inConceptScheme rdf:resource="http://syndication.direct.gov.uk/schemes/dg"/>
   </skos:Concept>
 
-  <skos:Concept rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/762">
+  <skos:Concept rdf:about="http://syndication.direct.gov.uk/id/concept/dg/762">
     <skos:prefLabel>NHS Direct</skos:prefLabel>
     <skos:broader rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/307"/>
     <skos:inConceptScheme rdf:resource="http://syndication.direct.gov.uk/schemes/dg"/>
   </skos:Concept>
 
-  <skos:Concept rdf:resource="http://syndication.direct.gov.uk/id/concept/dg/253">
+  <skos:Concept rdf:about="http://syndication.direct.gov.uk/id/concept/dg/253">
     <skos:prefLabel>Job Grants</skos:prefLabel>
     <skos:scopeNote>Job Grant replaced Back to Work Bonus and Lone Parent's Benefit Run-on for new claims from 25 October 2004
     </skos:scopeNote>

@@ -57,7 +57,7 @@ module SemanticallyTaggable
     end
 
     def lookup_tag(pointer_node)
-      url_xpath = "//skos:Concept[@rdf:resource='#{pointer_node['resource']}']"
+      url_xpath = "//skos:Concept[@rdf:about='#{pointer_node['resource']}']"
       concept_node = pointer_node.at_xpath(url_xpath) || (raise RuntimeError, "Concept at #{url_xpath} not found")
       pref_label = concept_node.at_xpath('skos:prefLabel').content
       @scheme.tags.find_by_name pref_label
