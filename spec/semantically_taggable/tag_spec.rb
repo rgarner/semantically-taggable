@@ -1,8 +1,8 @@
 require "spec_helper"
 
 describe SemanticallyTaggable::Tag do
-  let(:scheme) { SemanticallyTaggable::Scheme.by_name(:dg_topics) }
-  let(:other_scheme) { SemanticallyTaggable::Scheme.by_name(:keywords) }
+  let(:dg_topics) { SemanticallyTaggable::Scheme.by_name(:dg_topics) }
+  let(:keywords) { SemanticallyTaggable::Scheme.by_name(:keywords) }
 
   before do
     reset_database!
@@ -21,21 +21,35 @@ describe SemanticallyTaggable::Tag do
       }.should raise_error(ActiveRecord::RecordNotFound)
     end
 
-    it "should save schemes with the tag" do
-      scheme = SemanticallyTaggable::Scheme.by_name(:dg_topics)
-      keyword = SemanticallyTaggable::Tag.create(:name => '1', :scheme => scheme)
-      keyword.scheme = scheme
-      keyword.save!
-      keyword = SemanticallyTaggable::Tag.find_by_name('1')
-      keyword.scheme.should == scheme
-    end
+    describe "creating tags within schemes" do
 
-    it "should treat tags in different schemes as different tags" do
-      keyword = SemanticallyTaggable::Tag.create(:name => '1', :scheme => SemanticallyTaggable::Scheme.by_name(:dg_topics))
-      keyword.save!
-      lambda {
-        SemanticallyTaggable::Tag.find_or_create_all_with_like_by_name('1', '2', :keywords)
-      }.should change(SemanticallyTaggable::Tag, :count).by(2)
+      it "should save schemes with the tag" do
+        tag = SemanticallyTaggable::Tag.create!(:name => '1')
+        tag.scheme = dg_topics
+        tag.save!
+
+        tag = SemanticallyTaggable::Tag.find_by_name('1')
+        tag.scheme.should == dg_topics
+      end
+
+      it "should treat tags in different schemes as different tags" do
+        dg_topic = SemanticallyTaggable::Tag.create(:name => '1', :scheme => dg_topics)
+        dg_topic.save!
+
+        lambda {
+          SemanticallyTaggable::Tag.find_or_create_all_with_like_by_name('1', '2', :keywords)
+        }.should change(SemanticallyTaggable::Tag, :count).by(2)
+      end
+
+      it "should silently drop tags when the scheme is set to restrict_to_known_tags" do
+        tag = SemanticallyTaggable::Tag.create(:name => '1')
+        tag.scheme = dg_topics
+        tag.save!
+
+        lambda {
+          SemanticallyTaggable::Tag.find_or_create_all_with_like_by_name('1', '2', :dg_topics).should == [tag]
+        }.should change(SemanticallyTaggable::Tag, :count).by(0)
+      end
     end
   end
 
@@ -43,9 +57,9 @@ describe SemanticallyTaggable::Tag do
     describe "Tag relationships" do
       describe "Bidirectional associations" do
         before do
-          @parent = scheme.create_tag(:name => 'Tax')
-          @child = scheme.create_tag(:name => 'Income Tax')
-          @unrelated = scheme.create_tag(:name => 'unrelated')
+          @parent = dg_topics.create_tag(:name => 'Tax')
+          @child = dg_topics.create_tag(:name => 'Income Tax')
+          @unrelated = dg_topics.create_tag(:name => 'unrelated')
         end
 
         describe "when assigning with narrower" do
@@ -68,27 +82,14 @@ describe SemanticallyTaggable::Tag do
           specify { @child.broader_tags.should include(@parent) }
           specify { @parent.narrower_tags.should include(@child) }
         end
-
-#        describe "when assigning from both ends, such as might happen in the import" do
-#          before do
-#            @parent.narrower_tags << @child
-#            @child.broader_tags << @parent
-#
-#            @child.save
-#            @parent.save
-#          end
-#
-#          specify { @parent.should have(1).narrower_tag }
-#          specify { @child.should have(1).broader_tag }
-#        end
       end
 
       describe "Related tags" do
         before do
-          @tax_tag = scheme.create_tag(:name => 'Tax')
-          @income_tax_tag = scheme.create_tag(:name => 'Income Tax')
-          @inheritance_tax_tag = scheme.create_tag(:name => 'Inheritance Tax')
-          @giraffes = scheme.create_tag(:name => 'giraffes')
+          @tax_tag = dg_topics.create_tag(:name => 'Tax')
+          @income_tax_tag = dg_topics.create_tag(:name => 'Income Tax')
+          @inheritance_tax_tag = dg_topics.create_tag(:name => 'Inheritance Tax')
+          @giraffes = dg_topics.create_tag(:name => 'giraffes')
 
           @tax_tag.related_tags << [@income_tax_tag, @inheritance_tax_tag]
           @tax_tag.save
@@ -129,8 +130,8 @@ describe SemanticallyTaggable::Tag do
   end
 
   describe "Tag synonyms" do
-    let(:benefits_tag) { scheme.create_tag(:name => 'Benefits') }
-    let(:benefits_keyword) { other_scheme.create_tag(:name => 'Benefits') }
+    let(:benefits_tag) { dg_topics.create_tag(:name => 'Benefits') }
+    let(:benefits_keyword) { keywords.create_tag(:name => 'Benefits') }
 
     it "should allow a tag to have synonyms" do
       benefits_tag.synonyms << SemanticallyTaggable::Synonym.new(:name => 'State Benefits')

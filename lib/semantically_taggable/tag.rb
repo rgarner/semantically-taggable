@@ -68,15 +68,18 @@ module SemanticallyTaggable
 
       scheme = SemanticallyTaggable::Scheme.by_name(scheme_name)
       list = [list].flatten
-
       return [] if list.empty?
 
       existing_tags = scheme.tags.named_any(list).all
-      new_tag_names = list.reject do |name|
-        name = comparable_name(name)
-        existing_tags.any? { |tag| comparable_name(tag.name) == name }
+      if scheme.restrict_to_known_tags
+        created_tags = []
+      else
+        new_tag_names = list.reject do |name|
+          name = comparable_name(name)
+          existing_tags.any? { |tag| comparable_name(tag.name) == name }
+        end
+        created_tags = new_tag_names.map { |name| Tag.create(:name => name) { |tag| tag.scheme = scheme } }
       end
-      created_tags = new_tag_names.map { |name| Tag.create(:name => name) { |tag| tag.scheme = scheme } }
 
       existing_tags + created_tags
     end

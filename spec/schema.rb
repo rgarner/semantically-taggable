@@ -28,6 +28,7 @@ ActiveRecord::Schema.define :version => 0 do
     t.string :description
     t.string :delimiter, :limit => 10, :default => ','
     t.boolean :polyhierarchical, :default => false
+    t.boolean :restrict_to_known_tags, :default => false
   end
 
   # Transitive closure table for multiple parent tags

@@ -4,7 +4,8 @@ def load_schemes!
       [
           {
               :name => 'dg_topics', :meta_name => 'DC.subject', :meta_scheme => 'Directgov.Topic',
-              :description => 'Directgov taxonomy concept ID taggings', :delimiter => ';', :polyhierarchical => true
+              :description => 'Directgov taxonomy concept ID taggings', :delimiter => ';', :polyhierarchical => true,
+              :restrict_to_known_tags => true
           },
           {
               :name => 'keywords', :meta_name => 'keywords',

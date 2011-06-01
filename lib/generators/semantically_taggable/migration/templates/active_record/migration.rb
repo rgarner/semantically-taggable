@@ -7,6 +7,7 @@ class SemanticallyTaggableMigration < ActiveRecord::Migration
       t.string :description
       t.string :delimiter, :limit => 10, :default => ','
       t.boolean :polyhierarchical, :default => false
+      t.boolean :restrict_to_known_tags, :default => false
     end
 
     add_index :schemes, :name, :unique => true
