@@ -85,7 +85,7 @@ module SemanticallyTaggable
     end
 
     def ==(object)
-      super || (object.is_a?(Tag) && name == object.name)
+      super || (object.is_a?(Tag) && name == object.name && scheme == object.scheme)
     end
 
     def to_s

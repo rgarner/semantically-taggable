@@ -22,29 +22,40 @@ describe SemanticallyTaggable::Tag do
     end
 
     describe "creating tags within schemes" do
-
       it "should save schemes with the tag" do
-        tag = SemanticallyTaggable::Tag.create!(:name => '1')
-        tag.scheme = dg_topics
-        tag.save!
+        SemanticallyTaggable::Tag.create!(:name => '1') do |tag|
+          tag.scheme = dg_topics
+        end
 
         tag = SemanticallyTaggable::Tag.find_by_name('1')
         tag.scheme.should == dg_topics
       end
 
       it "should treat tags in different schemes as different tags" do
-        dg_topic = SemanticallyTaggable::Tag.create(:name => '1', :scheme => dg_topics)
-        dg_topic.save!
+        SemanticallyTaggable::Tag.create(:name => '1') do |tag|
+          tag.scheme = dg_topics
+        end
 
         lambda {
           SemanticallyTaggable::Tag.find_or_create_all_with_like_by_name('1', '2', :keywords)
         }.should change(SemanticallyTaggable::Tag, :count).by(2)
       end
 
+      it "should not find tags in different schemes equal" do
+        topic = SemanticallyTaggable::Tag.create(:name => '1') do |tag|
+          tag.scheme = dg_topics
+        end
+        tag = SemanticallyTaggable::Tag.create(:name => '1') do |tag|
+          tag.scheme = keywords
+        end
+
+        topic.should_not == tag
+      end
+
       it "should silently drop tags when the scheme is set to restrict_to_known_tags" do
-        tag = SemanticallyTaggable::Tag.create(:name => '1')
-        tag.scheme = dg_topics
-        tag.save!
+        tag = SemanticallyTaggable::Tag.create(:name => '1') do |tag|
+          tag.scheme = dg_topics
+        end
 
         lambda {
           SemanticallyTaggable::Tag.find_or_create_all_with_like_by_name('1', '2', :dg_topics).should == [tag]
