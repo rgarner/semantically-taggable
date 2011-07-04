@@ -17,7 +17,7 @@ describe SemanticallyTaggable::TagParentage do
 
     specify { taxonomy_tag.should parent(travel_health_tag).at_distance(2) }
     specify { taxonomy_tag.should parent(nhs_direct_tag).at_distance(3) }
-    specify { health_and_care_tag.should parent(nhs_direct_tag).at_distance(2)}
+    specify { health_and_care_tag.should parent(nhs_direct_tag).at_distance(2) }
 
     it "should not make direct connections to indirect tags through narrower_tags" do
       taxonomy_tag.narrower_tags.should_not include(nhs_direct_tag)
@@ -37,8 +37,20 @@ describe SemanticallyTaggable::TagParentage do
         Article.tagged_with('Health and care', :on => :dg_topics).should have(1).article
       end
 
+
       it "should get all articles for the taxonomy" do
         Article.tagged_with('Directgov taxonomy', :on => :dg_topics).should have(2).articles
+      end
+
+      it "should get articles tagged_with 'Health and care' when they're tagged with a sub-tag and when asking for :any" do
+        Article.tagged_with('Health and care', :on => :dg_topics, :any => true).should have(1).article
+      end
+
+      describe "Indirect exclusions" do
+        subject { Article.tagged_with('Health and care', :on => :dg_topics, :exclude => true) }
+
+        its(:length) { should eql(1) }
+        its(:first)  { should eql(@jobs_article) }
       end
     end
   end

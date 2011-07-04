@@ -37,9 +37,6 @@ describe "Tagging articles" do
 
   it "should assign the associated scheme when tagging" do
     @article.keyword_list = %w{one two three}
-    ActiveRecord::Base.logger.info "******* "
-    ActiveRecord::Base.logger.info "******* ASSOCIATED SCHEME"
-    ActiveRecord::Base.logger.info "******* "
     @article.save
     @article.keywords.each {|k| k.scheme.should == SemanticallyTaggable::Scheme.by_name(:keywords)}
   end
