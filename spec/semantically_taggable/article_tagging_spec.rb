@@ -4,6 +4,8 @@ describe "Tagging articles" do
   before(:each) do
     reset_database!
     @article = Article.new(:name => "Bob Jones")
+    ActiveRecord::Base.logger = Logger.new(STDOUT)
+
   end
 
   it "should have tag schemes" do

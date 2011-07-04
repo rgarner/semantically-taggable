@@ -8,6 +8,7 @@ describe SemanticallyTaggable::TagParentage do
       reset_database!
       import_rdf('dg_abridged.rdf')
       SemanticallyTaggable::TagParentage.refresh_closure!
+      ActiveRecord::Base.logger = Logger.new(STDOUT)
     end
 
     let(:taxonomy_tag) { SemanticallyTaggable::Tag.find_by_name('Directgov Taxonomy') }
@@ -42,12 +43,19 @@ describe SemanticallyTaggable::TagParentage do
         Article.tagged_with('Directgov taxonomy', :on => :dg_topics).should have(2).articles
       end
 
-      it "should get articles tagged_with 'Health and care' when they're tagged with a sub-tag and when asking for :any" do
-        Article.tagged_with('Health and care', :on => :dg_topics, :any => true).should have(1).article
+      describe "The :any option" do
+        subject { Article.tagged_with('Health and care', :on => :dg_topics, :any => true) }
+
+        it { should have(1).article }
+        its(:first) { should eql(@nhs_article) }
+        specify do
+          Article.tagged_with(['Health and care', 'Job Grants'], :on => :dg_topics, :any => true).
+              should have(2).articles
+        end
       end
 
       describe "Indirect exclusions" do
-        subject { Article.tagged_with('Health and care', :on => :dg_topics, :exclude => true) }
+        subject { Article.tagged_with(['Health and care', 'Travel'], :on => :dg_topics, :exclude => true) }
 
         its(:length) { should eql(1) }
         its(:first)  { should eql(@jobs_article) }

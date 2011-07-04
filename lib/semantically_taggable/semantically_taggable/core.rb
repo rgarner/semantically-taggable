@@ -57,6 +57,27 @@ module SemanticallyTaggable::Taggable
         object.column_names.map { |column| "#{object.table_name}.#{column}" }.join(", ")
       end
 
+      def scheme_tags_like_any_of_these(scheme, tag_list)
+        if scheme.polyhierarchical
+          tags = scheme.tags.named_any(tag_list)
+          "tags.id IN (#{tags.map {
+              |t| "SELECT #{t.id} UNION SELECT child_tag_id FROM tag_parentages WHERE parent_tag_id = #{t.id}"
+            }.join(" UNION ")
+          })"
+        else
+          "(#{tag_list.map { |t| sanitize_sql(["tags.name LIKE ?", t]) }.join(" OR ")})"\
+              + " AND tags.scheme_id = #{scheme.id}"
+        end
+      end
+
+      def scheme_taggings_for_these_tags(scheme, tag_list)
+        "SELECT taggings.taggable_id FROM taggings
+         JOIN tags ON
+            taggings.tag_id = tags.id AND
+            taggings.taggable_type = #{quote_value(base_class.name)} AND
+            #{scheme_tags_like_any_of_these(scheme, tag_list)}"
+      end
+
       ##
       # Return a scope of objects that are tagged with the specified tags.
       #
@@ -84,23 +105,12 @@ module SemanticallyTaggable::Taggable
         conditions = []
 
         if options.delete(:exclude)
-          tags_conditions = "(#{tag_list.map { |t| sanitize_sql(["tags.name LIKE ?", t]) }.join(" OR ")})"\
-            + " AND tags.scheme_id = #{scheme.id}"
           conditions << %{
-            #{table_name}.#{primary_key} NOT IN (
-              SELECT #{SemanticallyTaggable::Tagging.table_name}.taggable_id FROM taggings
-              JOIN tags ON taggings.tag_id = tags.id AND (#{tags_conditions})
-              WHERE taggings.taggable_type = #{quote_value(base_class.name)})
+            #{table_name}.#{primary_key} NOT IN (#{scheme_taggings_for_these_tags(scheme, tag_list)})
           }
-
         elsif options.delete(:any)
-          tags_conditions = "(#{tag_list.map { |t| sanitize_sql(["tags.name LIKE ?", t]) }.join(" OR ")})"\
-            + " AND tags.scheme_id = #{scheme.id}"
           conditions << %{
-            #{table_name}.#{primary_key} IN (
-              SELECT taggings.taggable_id FROM taggings
-              JOIN tags ON taggings.tag_id = tags.id AND #{tags_conditions}
-              WHERE taggings.taggable_type = #{quote_value(base_class.name)})
+            #{table_name}.#{primary_key} IN (#{scheme_taggings_for_these_tags(scheme, tag_list)})
           }
         else
           tags = scheme.tags.named_any(tag_list)
