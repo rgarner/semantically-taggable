@@ -84,6 +84,20 @@ module SemanticallyTaggable
       existing_tags + created_tags
     end
 
+    def model_counts
+      SemanticallyTaggable::Tagging.all(
+        :select => 'taggings.taggable_type, COUNT(*) as model_count',
+        :conditions => %{
+            taggings.tag_id IN
+            (SELECT #{self.id} UNION SELECT child_tag_id from tag_parentages WHERE parent_tag_id = #{self.id})
+        },
+        :group => 'taggings.taggable_type'
+      ).inject({}) do |summary_hash, tagging|
+        summary_hash[tagging.taggable_type.to_s] = tagging.model_count.to_i
+        summary_hash
+      end
+    end
+
     def ==(object)
       super || (object.is_a?(Tag) && name == object.name && scheme == object.scheme)
     end

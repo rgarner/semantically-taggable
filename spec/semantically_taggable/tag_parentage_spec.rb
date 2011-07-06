@@ -31,26 +31,28 @@ describe SemanticallyTaggable::TagParentage do
     describe "Getting indirectly tagged articles" do
       before :all do
         @nhs_article = Article.create(:name => 'NHS Direct article', :dg_topic_list => 'NHS Direct')
+        @generic_health_article = Article.create(:name => 'Health article', :dg_topic_list => 'Health and care')
         @jobs_article = Article.create(:name => 'Jobs article', :dg_topic_list => 'Job Grants')
+
+        @generic_health_contact = Contact.create(:contact_point => 'Health contact', :dg_topic_list => 'Health and care')
       end
 
       it "should get articles tagged_with 'Health and care' when they're tagged with a sub-tag" do
-        Article.tagged_with('Health and care', :on => :dg_topics).should have(1).article
+        Article.tagged_with('Health and care', :on => :dg_topics).should have(2).articles
       end
 
-
       it "should get all articles for the taxonomy" do
-        Article.tagged_with('Directgov taxonomy', :on => :dg_topics).should have(2).articles
+        Article.tagged_with('Directgov taxonomy', :on => :dg_topics).should have(3).articles
       end
 
       describe "The :any option" do
         subject { Article.tagged_with('Health and care', :on => :dg_topics, :any => true) }
 
-        it { should have(1).article }
+        it { should have(2).articles }
         its(:first) { should eql(@nhs_article) }
         specify do
           Article.tagged_with(['Health and care', 'Job Grants'], :on => :dg_topics, :any => true).
-              should have(2).articles
+              should have(3).articles
         end
       end
 
@@ -59,6 +61,12 @@ describe SemanticallyTaggable::TagParentage do
 
         its(:length) { should eql(1) }
         its(:first)  { should eql(@jobs_article) }
+      end
+
+      describe "Tag counts for a schemed tag" do
+        subject { SemanticallyTaggable::Tag.named('Health and care').first.model_counts }
+
+        it { should eql({ 'Article' => 2, 'Contact' => 1 }) }
       end
     end
   end

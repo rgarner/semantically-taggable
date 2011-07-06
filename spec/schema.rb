@@ -62,6 +62,10 @@ ActiveRecord::Schema.define :version => 0 do
     t.column :name, :string
     t.column :type, :string
   end
+
+  create_table :contacts, :force => true do |t|
+    t.column :contact_point, :string
+  end
   
   create_table :untaggable_models, :force => true do |t|
     t.column :article_id, :integer

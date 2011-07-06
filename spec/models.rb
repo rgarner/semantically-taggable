@@ -4,6 +4,10 @@ class Article < ActiveRecord::Base
   has_many :untaggable_models
 end
 
+class Contact < ActiveRecord::Base
+  semantically_taggable :dg_topics
+end
+
 class CachedModel < ActiveRecord::Base
   semantically_taggable :keywords
 end
