@@ -86,7 +86,7 @@ module SemanticallyTaggable
 
     def model_counts
       SemanticallyTaggable::Tagging.all(
-        :select => 'taggings.taggable_type, COUNT(*) as model_count',
+        :select => 'taggings.taggable_type, COUNT(DISTINCT taggable_id) as model_count',
         :conditions => %{
             taggings.tag_id IN
             (SELECT #{self.id} UNION SELECT child_tag_id from tag_parentages WHERE parent_tag_id = #{self.id})

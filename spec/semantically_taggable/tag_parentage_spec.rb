@@ -32,7 +32,7 @@ describe SemanticallyTaggable::TagParentage do
       before :all do
         @nhs_article = Article.create(:name => 'NHS Direct article', :dg_topic_list => 'NHS Direct')
         @generic_health_article = Article.create(:name => 'Health article', :dg_topic_list => 'Health and care')
-        @jobs_article = Article.create(:name => 'Jobs article', :dg_topic_list => 'Job Grants')
+        @jobs_article = Article.create(:name => 'Jobs article', :dg_topic_list => ['Job Grants', 'Directgov Taxonomy'])
 
         @generic_health_contact = Contact.create(:contact_point => 'Health contact', :dg_topic_list => 'Health and care')
       end
@@ -42,7 +42,7 @@ describe SemanticallyTaggable::TagParentage do
       end
 
       it "should get all articles for the taxonomy" do
-        Article.tagged_with('Directgov taxonomy', :on => :dg_topics).should have(3).articles
+        Article.tagged_with('Directgov taxonomy', :on => :dg_topics).uniq.should have(3).articles
       end
 
       describe "The :any option" do
@@ -64,9 +64,9 @@ describe SemanticallyTaggable::TagParentage do
       end
 
       describe "Tag counts for a schemed tag" do
-        subject { SemanticallyTaggable::Tag.named('Health and care').first.model_counts }
+        subject { SemanticallyTaggable::Tag.named('Directgov Taxonomy').first.model_counts }
 
-        it { should eql({ 'Article' => 2, 'Contact' => 1 }) }
+        it { should eql({ 'Article' => 3, 'Contact' => 1 }) }
       end
     end
   end
