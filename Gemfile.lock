@@ -92,6 +92,7 @@ DEPENDENCIES
   mysql
   nokogiri
   rails (>= 3.0)
+  rake (~> 0.8.7)
   rcov
   rspec (~> 2.5.0)
   spork

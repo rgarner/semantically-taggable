@@ -11,6 +11,7 @@ require 'rake'
 
 require 'jeweler'
 Jeweler::Tasks.new do |gem|
+  gem.version = File.read('VERSION').chomp # https://github.com/technicalpickles/jeweler/issues/81
   # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = "semantically-taggable"
   gem.homepage = "http://github.com/rgarner/semantically-taggable"
