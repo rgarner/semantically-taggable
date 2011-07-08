@@ -84,18 +84,29 @@ module SemanticallyTaggable
       existing_tags + created_tags
     end
 
+    ##
+    # Gets a summary of counts of each model for this tag
+    # e.g. { ''Article' => 20, 'Contact' => 5 }
     def model_counts
       SemanticallyTaggable::Tagging.all(
-        :select => 'taggings.taggable_type, COUNT(DISTINCT taggable_id) as model_count',
-        :conditions => %{
-            taggings.tag_id IN
-            (SELECT #{self.id} UNION SELECT child_tag_id from tag_parentages WHERE parent_tag_id = #{self.id})
-        },
+        :select => 'taggings.taggable_type, COUNT(DISTINCT taggings.taggable_id) as model_count',
+        :joins => 'LEFT JOIN tag_parentages ON taggings.tag_id = tag_parentages.child_tag_id',
+        :conditions => %{tag_parentages.parent_tag_id = #{self.id}},
         :group => 'taggings.taggable_type'
       ).inject({}) do |summary_hash, tagging|
         summary_hash[tagging.taggable_type.to_s] = tagging.model_count.to_i
         summary_hash
       end
+    end
+
+    ##
+    # Gets a total of all tagged models for this tag
+    def all_models_total
+      SemanticallyTaggable::Tagging.all(
+        :select => 'COUNT(DISTINCT taggings.taggable_type, taggings.taggable_id) as all_models_count',
+        :joins => "LEFT JOIN tag_parentages on (taggings.tag_id = tag_parentages.child_tag_id AND tag_parentages.parent_tag_id = #{self.id})",
+        :conditions => "taggings.tag_id = #{self.id} OR tag_parentages.child_tag_id IS NOT NULL"
+      ).first.all_models_count.to_i
     end
 
     def ==(object)

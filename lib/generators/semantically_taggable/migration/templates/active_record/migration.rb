@@ -18,6 +18,9 @@ class SemanticallyTaggableMigration < ActiveRecord::Migration
       t.string :original_id
     end
 
+    add_index :tags, :name
+    add_index :tags, :scheme_id
+
     create_table :taggings do |t|
       t.references :tag
 

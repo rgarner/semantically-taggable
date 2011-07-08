@@ -60,6 +60,7 @@ module SemanticallyTaggable::Taggable
       def scheme_tags_like_any_of_these(scheme, tag_list)
         if scheme.polyhierarchical
           tags = scheme.tags.named_any(tag_list)
+          return "1 = 0" if tags.empty?
           "tags.id IN (#{tags.map {
               |t| "SELECT #{t.id} UNION SELECT child_tag_id FROM tag_parentages WHERE parent_tag_id = #{t.id}"
             }.join(" UNION ")

@@ -3,7 +3,7 @@ module SemanticallyTaggable
     belongs_to :parent_tag, :class_name => 'SemanticallyTaggable::Tag'
     belongs_to :child_tag, :class_name => 'SemanticallyTaggable::Tag'
 
-    # Refreshes the closure table across schemes
+      # Refreshes the closure table across schemes
     def self.refresh_closure!
       ActiveRecord::Base.connection.execute %{DELETE FROM tag_parentages WHERE distance <> 1}
 
@@ -22,8 +22,20 @@ module SemanticallyTaggable
         }
         total_inserts += rows_affected
       end
+      total_inserts += ActiveRecord::Base.connection.update(%{
+                        INSERT INTO `tag_parentages`
+                        SELECT parent_tag_id, parent_tag_id, 0 FROM `tag_parentages`
+                        GROUP BY parent_tag_id })
+      total_inserts += ActiveRecord::Base.connection.update(
+          %{
+             INSERT INTO tag_parentages (parent_tag_id, child_tag_id, distance)
+             SELECT tags.id, tags.id, 0
+             FROM tags
+             LEFT JOIN tag_parentages ON tags.id = tag_parentages.parent_tag_id
+             WHERE tag_parentages.parent_tag_id IS NULL
+             AND tags.scheme_id IN (SELECT id FROM schemes WHERE polyhierarchical = 1)
+          })
       total_inserts
     end
-
   end
 end

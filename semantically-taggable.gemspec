@@ -59,20 +59,6 @@ Gem::Specification.new do |s|
   s.require_paths = [%q{lib}]
   s.rubygems_version = %q{1.8.5}
   s.summary = %q{A semantic tagging system for Rails 3}
-  s.test_files = [
-    "spec/database_seeder.rb",
-    "spec/models.rb",
-    "spec/schema.rb",
-    "spec/semantically_taggable/article_tagging_spec.rb",
-    "spec/semantically_taggable/scheme_spec.rb",
-    "spec/semantically_taggable/semantically-taggable_spec.rb",
-    "spec/semantically_taggable/shared_spec_helpers.rb",
-    "spec/semantically_taggable/tag_list_spec.rb",
-    "spec/semantically_taggable/tag_parentage_spec.rb",
-    "spec/semantically_taggable/tag_spec.rb",
-    "spec/semantically_taggable/tags_helper_spec.rb",
-    "spec/spec_helper.rb"
-  ]
 
   if s.respond_to? :specification_version then
     s.specification_version = 3
@@ -84,7 +70,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<nokogiri>, [">= 0"])
       s.add_development_dependency(%q<rspec>, ["~> 2.5.0"])
       s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
-      s.add_development_dependency(%q<jeweler>, ["~> 1.5.2"])
+      s.add_development_dependency(%q<jeweler>, ["~> 1.6.3"])
       s.add_development_dependency(%q<rcov>, [">= 0"])
       s.add_development_dependency(%q<spork>, [">= 0"])
     else
@@ -94,7 +80,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<nokogiri>, [">= 0"])
       s.add_dependency(%q<rspec>, ["~> 2.5.0"])
       s.add_dependency(%q<bundler>, ["~> 1.0.0"])
-      s.add_dependency(%q<jeweler>, ["~> 1.5.2"])
+      s.add_dependency(%q<jeweler>, ["~> 1.6.3"])
       s.add_dependency(%q<rcov>, [">= 0"])
       s.add_dependency(%q<spork>, [">= 0"])
     end
@@ -105,7 +91,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<nokogiri>, [">= 0"])
     s.add_dependency(%q<rspec>, ["~> 2.5.0"])
     s.add_dependency(%q<bundler>, ["~> 1.0.0"])
-    s.add_dependency(%q<jeweler>, ["~> 1.5.2"])
+    s.add_dependency(%q<jeweler>, ["~> 1.6.3"])
     s.add_dependency(%q<rcov>, [">= 0"])
     s.add_dependency(%q<spork>, [">= 0"])
   end
