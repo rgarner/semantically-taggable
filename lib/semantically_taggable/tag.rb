@@ -102,11 +102,12 @@ module SemanticallyTaggable
     ##
     # Gets a total of all tagged models for this tag
     def all_models_total
-      SemanticallyTaggable::Tagging.all(
+      scope =  SemanticallyTaggable::Tagging.all(
         :select => 'COUNT(DISTINCT taggings.taggable_type, taggings.taggable_id) as all_models_count',
         :joins => "LEFT JOIN tag_parentages on (taggings.tag_id = tag_parentages.child_tag_id AND tag_parentages.parent_tag_id = #{self.id})",
         :conditions => "taggings.tag_id = #{self.id} OR tag_parentages.child_tag_id IS NOT NULL"
-      ).first.all_models_count.to_i
+      )
+      scope.first.all_models_count.to_i
     end
 
     def ==(object)

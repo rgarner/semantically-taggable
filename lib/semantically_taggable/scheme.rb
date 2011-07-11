@@ -46,16 +46,18 @@ module SemanticallyTaggable
 
     ##
     # Given a list of tag strings, find how many resources
-    # are tagged with it
+    # are tagged with each and return a hash of the results
+    # e.g. { 'news' => 93, 'tax' => 124 }
     def model_counts_for(*tag_strings)
       return [] if tag_strings.empty?
       like_conditions = tag_strings.map { 'tags.name LIKE ?' }.join(' OR ')
       Tag.all(
           :select => 'tags.name, COUNT(DISTINCT taggings.taggable_type, taggings.taggable_id) as tagged_models',
-          :joins => [
+          :joins => self.polyhierarchical ? [
               'LEFT JOIN tag_parentages ON tags.id = tag_parentages.parent_tag_id',
               'INNER JOIN taggings on taggings.tag_id = tag_parentages.child_tag_id'
-          ],
+          ] :
+          'INNER JOIN taggings on taggings.tag_id = tags.id',
           :conditions => ["tags.scheme_id = ? AND (#{like_conditions})", self.id, *tag_strings],
           :group => 'tags.name'
       ).inject({}) do |summary_hash, tag|

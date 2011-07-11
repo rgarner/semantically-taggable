@@ -4,8 +4,6 @@ describe "Tagging articles" do
   before(:each) do
     reset_database!
     @article = Article.new(:name => "Bob Jones")
-    ActiveRecord::Base.logger = Logger.new(STDOUT)
-
   end
 
   it "should have tag schemes" do
@@ -16,15 +14,35 @@ describe "Tagging articles" do
     @article.scheme_names.should == Article.scheme_names
   end
 
-  it "should have tag_counts_on" do
-    Article.tag_counts_on(:keywords).all.should be_empty
 
-    @article.keyword_list = ["awesome", "epic"]
-    @article.ipsv_subject_list = ["epic", "match"]
-    @article.save
+  describe "counting things" do
+    before :each do
+      Article.tag_counts_on(:keywords).all.should be_empty
 
-    Article.tag_counts_on(:keywords).length.should == 2
-    @article.tag_counts_on(:keywords).length.should == 2
+      @article.keyword_list = ["awesome", "epic"]
+      @article.ipsv_subject_list = ["epic", "match"]
+      @article.save
+
+      Contact.create(:contact_point => 'Lionel Messi', :keyword_list => ['awesome', 'player'])
+      ActiveRecord::Base.logger = Logger.new(STDOUT)
+    end
+
+    let(:keywords_scheme) { SemanticallyTaggable::Scheme.by_name(:keywords) }
+    let(:awesome_keyword) { keywords_scheme.tags.named('awesome').first }
+
+    it "should have tag_counts_on" do
+      Article.tag_counts_on(:keywords).length.should == 2
+      @article.tag_counts_on(:keywords).length.should == 2
+    end
+
+    it "should be able to get Scheme#model_counts_for" do
+      keywords_scheme.model_counts_for('awesome', 'epic')\
+        .should == { 'awesome' => 2, 'epic' => 1 }
+    end
+
+    it "should be able to get Tag#all_models_total" do
+      awesome_keyword.all_models_total.should == 2
+    end
   end
 
   it "should be able to create tags using the scheme's delimiter" do

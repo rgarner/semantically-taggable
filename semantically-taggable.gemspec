@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{semantically-taggable}
-  s.version = "0.3.1"
+  s.version = "0.4.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = [%q{Russell Garner}]
-  s.date = %q{2011-07-06}
+  s.date = %q{2011-07-08}
   s.description = %q{Based really very heavily on acts_as_taggable_on, but introduces tagging schemes and moves
   context into tags (so, for example, "Environment" in a 'green_tags' scheme is not semantically equivalent
   to "Environment" in an sysadmin's tagging scheme)}
@@ -39,7 +39,6 @@ Gem::Specification.new do |s|
     "spec/database.yml",
     "spec/database.yml.sample",
     "spec/database_seeder.rb",
-    "spec/debug.log",
     "spec/models.rb",
     "spec/schema.rb",
     "spec/semantically_taggable/article_tagging_spec.rb",

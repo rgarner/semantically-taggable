@@ -5,7 +5,7 @@ class Article < ActiveRecord::Base
 end
 
 class Contact < ActiveRecord::Base
-  semantically_taggable :dg_topics
+  semantically_taggable :keywords, :dg_topics
 end
 
 class CachedModel < ActiveRecord::Base
