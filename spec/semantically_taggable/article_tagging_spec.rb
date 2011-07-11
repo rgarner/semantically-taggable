@@ -24,6 +24,7 @@ describe "Tagging articles" do
       @article.save
 
       Contact.create(:contact_point => 'Lionel Messi', :keyword_list => ['awesome', 'player'])
+      Contact.create(:contact_point => 'Owen Hargreaves', :keyword_list => 'player')
       ActiveRecord::Base.logger = Logger.new(STDOUT)
     end
 
@@ -33,6 +34,10 @@ describe "Tagging articles" do
     it "should have tag_counts_on" do
       Article.tag_counts_on(:keywords).length.should == 2
       @article.tag_counts_on(:keywords).length.should == 2
+    end
+
+    it "should be able to get Tag#model_counts" do
+      awesome_keyword.model_counts.should == {'Article' => 1, 'Contact' =>1}
     end
 
     it "should be able to get Scheme#model_counts_for" do

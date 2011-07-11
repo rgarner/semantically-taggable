@@ -88,10 +88,17 @@ module SemanticallyTaggable
     # Gets a summary of counts of each model for this tag
     # e.g. { ''Article' => 20, 'Contact' => 5 }
     def model_counts
+      joins = nil
+      if scheme.polyhierarchical
+        joins = 'LEFT JOIN tag_parentages ON taggings.tag_id = tag_parentages.child_tag_id'
+        conditions = ['tag_parentages.parent_tag_id = ?', self.id]
+      else
+        conditions = ['taggings.tag_id = ?', self.id]
+      end
       SemanticallyTaggable::Tagging.all(
         :select => 'taggings.taggable_type, COUNT(DISTINCT taggings.taggable_id) as model_count',
-        :joins => 'LEFT JOIN tag_parentages ON taggings.tag_id = tag_parentages.child_tag_id',
-        :conditions => %{tag_parentages.parent_tag_id = #{self.id}},
+        :joins => joins,
+        :conditions => conditions,
         :group => 'taggings.taggable_type'
       ).inject({}) do |summary_hash, tagging|
         summary_hash[tagging.taggable_type.to_s] = tagging.model_count.to_i
